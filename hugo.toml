@@ -1,0 +1,196 @@
+# ============================================================
+# Hugo 个人技术博客 - 主配置文件
+# 主题: PaperMod | 托管: GitHub Pages
+# ============================================================
+
+# --- 基础设置 ---
+baseURL = "https://zhoum2833.github.io/"
+title = "Zhoum's Tech Notes"
+languageCode = "zh-cn"
+defaultContentLanguage = "zh"
+theme = "PaperMod"
+copyright = "© 2024 zhoum2833 · Powered by Hugo & PaperMod"
+
+# --- 摘要长度 ---
+summaryLength = 120
+
+# --- 分页 ---
+paginate = 8                      # 每页文章数
+paginatePath = "page"             # 分页路径 /page/2/
+
+# --- 日期格式 ---
+[frontmatter]
+  date = [":filename", ":default"]
+
+[taxonomies]
+  tag = "tags"
+  category = "categories"
+
+# --- 代码高亮 (Chromium 风格) ---
+[markup]
+  [markup.highlight]
+    codeFences = true
+    guessSyntax = true
+    lineNos = true
+    lineNumbersInTable = false
+    noClasses = false
+    style = "dracula"
+    tabWidth = 4
+
+  # --- Markdown 增强 ---
+  [markup.goldmark]
+    [markup.goldmark.renderer]
+      unsafe = true              # 允许内联 HTML
+    [markup.goldmark.parser]
+      [markup.goldmark.parser.attribute]
+        block = true
+        title = true
+
+  # --- 目录 (Table of Contents) ---
+  [markup.tableOfContents]
+    endLevel = 4
+    ordered = false
+    startLevel = 2
+
+# --- 站点地图 / RSS ---
+[outputs]
+  home = ["HTML", "RSS", "JSON"]
+  section = ["HTML", "RSS"]
+
+[sitemap]
+  changefreq = "weekly"
+  priority = 0.5
+
+# ============================================================
+# 导航菜单
+# ============================================================
+[[menu.main]]
+  name = "文章"
+  url = "/posts/"
+  weight = 1
+
+[[menu.main]]
+  name = "标签"
+  url = "/tags/"
+  weight = 2
+
+[[menu.main]]
+  name = "分类"
+  url = "/categories/"
+  weight = 3
+
+[[menu.main]]
+  name = "搜索"
+  url = "/search/"
+  weight = 4
+
+[[menu.main]]
+  name = "关于"
+  url = "/about/"
+  weight = 5
+
+# ============================================================
+# PaperMod 主题参数
+# ============================================================
+[params]
+  # --- 首页信息 ---
+  author = "zhoum2833"
+  defaultTheme = "auto"          # auto / light / dark
+  disableThemeToggle = false
+  ShowShareButtons = false       # 不显示分享按钮
+  ShowReadingTime = true         # 显示阅读时间
+  ShowWordCount = true           # 显示字数统计
+  ShowBreadCrumbs = true         # 显示面包屑导航
+  ShowCodeCopyButtons = true     # 代码块复制按钮
+  ShowPostNavLinks = true        # 上一篇/下一篇
+  ShowToc = true                 # 显示文章目录
+  TocOpen = true                 # 默认展开目录
+  ShowFullTextinRSS = false
+  disableSpecial1stPost = false
+  hideFooter = false
+  hidemeta = false
+  hideSummary = false
+  showtoc = true
+
+  # --- 主页文章样式 ---
+  # homeInfoParams 定义首页 Hero 区域
+  [params.homeInfoParams]
+    title = "Hello, I'm zhoum2833 👋"
+    content = """
+    嵌入式软件工程师 | C/C++ · Python · Rust
+
+    这里记录编程、嵌入式开发、工具链、学习笔记。
+
+    思而不学则殆，学而不思则罔。
+    """
+
+  # --- 个人头像 ---
+  # 将头像图片放到 static/images/avatar.png 即可
+  # [params.profileMode]
+  #   enabled = true
+  #   title = "zhoum2833"
+  #   subtitle = "嵌入式软件工程师 · 终身学习者"
+  #   imageUrl = "/images/avatar.png"
+  #   imageTitle = "avatar"
+  #   imageWidth = 120
+  #   imageHeight = 120
+  #   buttons:
+  #     - name = "文章"
+  #       url = "/posts/"
+  #     - name = "标签"
+  #       url = "/tags/"
+  #     - name = "GitHub"
+  #       url = "https://github.com/zhoum2833"
+
+  # --- 社交链接 (首页右侧) ---
+  [[params.socialIcons]]
+    name = "github"
+    url = "https://github.com/zhoum2833"
+
+  [[params.socialIcons]]
+    name = "rss"
+    url = "/index.xml"
+
+  # --- 搜索 (PaperMod 内置 fuse.js 搜索) ---
+  [params.fuseOpts]
+    isCaseSensitive = false
+    shouldSort = true
+    location = 0
+    distance = 1000
+    threshold = 0.4
+    minMatchCharLength = 0
+    keys = ["title", "permalink", "summary", "content"]
+
+  # --- 编辑链接 (可选) ---
+  # editPost:
+  #   URL = "https://github.com/zhoum2833/zhoum2833.github.io/blob/main/content"
+  #   Text = "Suggest Changes"
+  #   appendFilePath = true
+
+  # --- 标签页配置 ---
+  [params.label]
+    text = "Zhoum's Tech Notes"
+    icon = "/images/avatar.png"
+    iconHeight = 35
+
+  # --- 文章元信息 ---
+  [params.article]
+    math: false
+    toc: true
+    readingTime: true
+
+  # --- 评论区 (可选，推荐 giscus) ---
+  # [params.giscus]
+  #   repo = "zhoum2833/zhoum2833.github.io"
+  #   repoId = ""
+  #   category = "General"
+  #   categoryId = ""
+  #   mapping = "pathname"
+  #   theme = "preferred_color_scheme"
+
+# ============================================================
+# Hugo 模块配置 (引入 PaperMod 主题)
+# ============================================================
+[module]
+  [[module.imports]]
+    path = "github.com/adityatelange/hugo-PaperMod"
