@@ -4,7 +4,7 @@
 # ============================================================
 
 # --- 基础设置 ---
-baseURL = "https://zhoum2833.github.io/"
+baseURL = "https://zhoum2833-wq.github.io/"
 title = "Zhoum's Tech Notes"
 languageCode = "zh-cn"
 defaultContentLanguage = "zh"
