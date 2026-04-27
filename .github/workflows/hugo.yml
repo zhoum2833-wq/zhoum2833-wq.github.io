@@ -6,16 +6,14 @@ name: Deploy Hugo Blog to GitHub Pages
 on:
   push:
     branches:
-      - main        # 推送到 main 分支时触发
-  workflow_dispatch: # 支持手动触发
+      - main
+  workflow_dispatch:
 
-# 设置 GITHUB_TOKEN 权限
 permissions:
   contents: read
   pages: write
   id-token: write
 
-# 确保同时只有一个部署任务运行
 concurrency:
   group: "pages"
   cancel-in-progress: false
@@ -28,41 +26,25 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
 
     steps:
-      # 1. 拉取代码
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          submodules: true          # 拉取 Git submodules (如果 theme 用 submodule)
           fetch-depth: 0
 
-      # 2. 安装 Go (hugo mod tidy 需要)
-      - name: Setup Go
-        uses: actions/setup-go@v5
-        with:
-          go-version: "1.22"
-
-      # 3. 安装 Hugo (extended 版本)
       - name: Setup Hugo
         uses: peaceiris/actions-hugo@v3
         with:
           hugo-version: "0.146.0"
           extended: true
 
-      # 4. 拉取 Hugo 模块依赖
-      - name: Fetch Hugo Modules
-        run: hugo mod tidy
-
-      # 5. 构建站点
       - name: Build
         run: hugo --minify --gc
 
-      # 6. 上传构建产物到 GitHub Pages
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
           path: ./public
 
-      # 7. 部署到 GitHub Pages
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
