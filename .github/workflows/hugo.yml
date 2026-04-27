@@ -35,28 +35,34 @@ jobs:
           submodules: true          # 拉取 Git submodules (如果 theme 用 submodule)
           fetch-depth: 0
 
-      # 2. 安装 Hugo (指定版本)
+      # 2. 安装 Go (hugo mod tidy 需要)
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.22"
+
+      # 3. 安装 Hugo (extended 版本)
       - name: Setup Hugo
         uses: peaceiris/actions-hugo@v3
         with:
           hugo-version: "0.140.0"
-          extended: true            # 使用 extended 版本 (支持 Sass/SCSS)
+          extended: true
 
-      # 3. 拉取 Hugo 模块依赖 (首次 resolve + 后续更新)
+      # 4. 拉取 Hugo 模块依赖
       - name: Fetch Hugo Modules
         run: hugo mod tidy
 
-      # 4. 构建站点
+      # 5. 构建站点
       - name: Build
         run: hugo --minify --gc
 
-      # 5. 上传构建产物到 GitHub Pages
+      # 6. 上传构建产物到 GitHub Pages
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
           path: ./public
 
-      # 6. 部署到 GitHub Pages
+      # 7. 部署到 GitHub Pages
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
