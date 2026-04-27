@@ -15,8 +15,9 @@ copyright = "© 2024 zhoum2833 · Powered by Hugo & PaperMod"
 summaryLength = 120
 
 # --- 分页 ---
-paginate = 8                      # 每页文章数
-paginatePath = "page"             # 分页路径 /page/2/
+[pagination]
+  pagerSize = 8                    # 每页文章数
+  path = "page"                    # 分页路径 /page/2/
 
 # --- 日期格式 ---
 [frontmatter]
