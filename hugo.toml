@@ -175,9 +175,9 @@ paginatePath = "page"             # 分页路径 /page/2/
 
   # --- 文章元信息 ---
   [params.article]
-    math: false
-    toc: true
-    readingTime: true
+    math = false
+    toc = true
+    readingTime = true
 
   # --- 评论区 (可选，推荐 giscus) ---
   # [params.giscus]
