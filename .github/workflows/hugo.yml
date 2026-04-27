@@ -42,9 +42,9 @@ jobs:
           hugo-version: "0.140.0"
           extended: true            # 使用 extended 版本 (支持 Sass/SCSS)
 
-      # 3. 拉取 Hugo 模块依赖
+      # 3. 拉取 Hugo 模块依赖 (首次 resolve + 后续更新)
       - name: Fetch Hugo Modules
-        run: hugo mod get -u
+        run: hugo mod tidy
 
       # 4. 构建站点
       - name: Build
