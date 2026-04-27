@@ -48,9 +48,9 @@ jobs:
           hugo-version: "0.146.0"
           extended: true
 
-      # 4. 拉取 Hugo 模块依赖 (锁定 PaperMod 稳定版)
+      # 4. 拉取 Hugo 模块依赖 (锁定 PaperMod v7.0 稳定版)
       - name: Fetch Hugo Modules
-        run: hugo mod get github.com/adityatelange/hugo-PaperMod@v8.0
+        run: hugo mod get github.com/adityatelange/hugo-PaperMod@v7.0
 
       # 5. 构建站点
       - name: Build
