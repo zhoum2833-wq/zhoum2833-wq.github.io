@@ -40,6 +40,9 @@ jobs:
       - name: Build
         run: hugo --minify --gc
 
+      - name: Show public dir structure
+        run: find public -type f | sort
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
