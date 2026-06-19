@@ -49,16 +49,15 @@ cd ..
 git add training-docs/
 git commit -m "update: update training docs"
 if %errorlevel% neq 0 (
-    echo [WARN] Nothing to commit
-) else (
-    git push
-    if %errorlevel% neq 0 (
-        echo [FAIL] Push failed! Check network or run: git push
-        pause
-        exit /b %errorlevel%
-    )
-    echo [OK] Pushed to GitHub
+    echo [INFO] Nothing new to commit, but will push any unpushed commits...
 )
+git push
+if %errorlevel% neq 0 (
+    echo [FAIL] Push failed! Check network or run: git push
+    pause
+    exit /b %errorlevel%
+)
+echo [OK] Pushed to GitHub
 echo.
 
 echo ========================================
