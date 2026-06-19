@@ -114,7 +114,6 @@ export default defineConfig({
           { text: '11.3 传感器与主控选型', link: '/11-project-design/selection' },
           { text: '11.4 分板还是合板', link: '/11-project-design/split-board' },
           { text: '11.5 成本与时间权衡', link: '/11-project-design/cost-time' },
-          { text: '11.6 团队分工', link: '/11-project-design/team' },
         ]
       },
       {
