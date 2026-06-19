@@ -24,8 +24,10 @@ def main():
         print("ERROR: No @split markers found in source file")
         return
 
-    # The preamble (title, TOC) goes into index.md
-    preamble = parts[0].strip()
+    # The preamble before the first --- goes into index.md
+    raw_preamble = parts[0].strip()
+    sep_idx = raw_preamble.find('\n---\n')
+    preamble = raw_preamble[:sep_idx].strip() if sep_idx != -1 else raw_preamble.split('\n#')[0].strip()
     index_path = os.path.join(DOCS, 'index.md')
     os.makedirs(os.path.dirname(index_path), exist_ok=True)
 
