@@ -82,9 +82,7 @@ jobs:
           extended: true
 
       - name: Build Hugo site
-        run: |
-          hugo mod get
-          hugo --minify --gc
+        run: hugo --minify --gc
 
       # ==================== 验证产物 ====================
       - name: Show public dir structure
