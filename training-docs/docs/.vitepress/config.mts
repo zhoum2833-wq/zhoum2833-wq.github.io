@@ -18,9 +18,12 @@ export default defineConfig({
         items: [
           { text: '1.1 CPU 架构', link: '/01-hardware/cpu-arch' },
           { text: '1.2 RAM 与 ROM', link: '/01-hardware/ram-rom' },
-          { text: '1.3 GPIO 与外设', link: '/01-hardware/gpio' },
-          { text: '1.4 引脚电气数据', link: '/01-hardware/electrical' },
-          { text: '1.5 最小系统板', link: '/01-hardware/minimum-board' },
+          { text: '1.3 ADC 与 DAC', link: '/01-hardware/adc-dac' },
+          { text: '1.4 定时器与 PWM', link: '/01-hardware/timer-pwm' },
+          { text: '1.5 传感器选型', link: '/01-hardware/sensors-overview' },
+          { text: '1.6 GPIO 与外设', link: '/01-hardware/gpio' },
+          { text: '1.7 引脚电气数据', link: '/01-hardware/electrical' },
+          { text: '1.8 最小系统板', link: '/01-hardware/minimum-board' },
         ]
       },
       {
@@ -29,6 +32,7 @@ export default defineConfig({
           { text: '2.1 USB 转串口芯片', link: '/02-connection/usb-uart' },
           { text: '2.2 虚拟 COM 口', link: '/02-connection/virtual-com' },
           { text: '2.3 USB 供电', link: '/02-connection/power' },
+          { text: '2.4 调试器', link: '/02-connection/debugger' },
         ]
       },
       {
@@ -47,6 +51,7 @@ export default defineConfig({
           { text: '4.2 I2C 通信', link: '/04-protocols/i2c' },
           { text: '4.3 SPI 通信', link: '/04-protocols/spi' },
           { text: '4.4 三种协议对比', link: '/04-protocols/comparison' },
+          { text: '4.5 CAN 总线', link: '/04-protocols/can' },
         ]
       },
       {
@@ -74,6 +79,9 @@ export default defineConfig({
           { text: '7.2 分层架构', link: '/07-programming/layering' },
           { text: '7.3 调试方法', link: '/07-programming/debugging' },
           { text: '7.4 编译链', link: '/07-programming/toolchain' },
+          { text: '7.5 PID 控制入门', link: '/07-programming/pid' },
+          { text: '7.6 状态机设计', link: '/07-programming/state-machine' },
+          { text: '7.7 滤波器入门', link: '/07-programming/filters' },
         ]
       },
       {
@@ -97,6 +105,7 @@ export default defineConfig({
           { text: '9.5 高速信号与信号完整性', link: '/09-pcb/high-speed' },
           { text: '9.6 常用连接器', link: '/09-pcb/connectors' },
           { text: '9.7 隔离', link: '/09-pcb/isolation' },
+          { text: '9.8 焊接与调试', link: '/09-pcb/soldering' },
         ]
       },
       {
@@ -126,6 +135,32 @@ export default defineConfig({
           { text: '12.5 MaixCAM Pro', link: '/12-modules/maxicam' },
           { text: '12.6 无线串口与烧录', link: '/12-modules/wireless' },
           { text: '12.7 实战：从点灯到巡线', link: '/12-modules/practical' },
+        ]
+      },
+      {
+        text: '第十三篇：电机与驱动',
+        items: [
+          { text: '13.1 有刷 vs 无刷电机', link: '/13-motors/dc-motor' },
+          { text: '13.2 步进电机', link: '/13-motors/stepper' },
+          { text: '13.3 舵机', link: '/13-motors/servo' },
+          { text: '13.4 电机选型与供电计算', link: '/13-motors/selection' },
+        ]
+      },
+      {
+        text: '第十四篇：显示与交互',
+        items: [
+          { text: '14.1 OLED 屏', link: '/14-display/oled' },
+          { text: '14.2 TFT 屏', link: '/14-display/tft' },
+          { text: '14.3 按键与编码器旋钮', link: '/14-display/input' },
+        ]
+      },
+      {
+        text: '第十五篇：电源管理',
+        items: [
+          { text: '15.1 电池选型', link: '/15-power/battery' },
+          { text: '15.2 电压转换方案', link: '/15-power/conversion' },
+          { text: '15.3 功率预算与续航', link: '/15-power/budget' },
+          { text: '15.4 保护电路', link: '/15-power/protection' },
         ]
       },
     ],
