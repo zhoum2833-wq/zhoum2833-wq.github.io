@@ -24,14 +24,14 @@
 `电赛入门指南.md` 按 `<!-- @split: XX-xxx/filename.md -->` 标记切分文章：
 
 ```markdown
-# 第〇篇：认识单片机
+# 第一篇：硬件基础
 
-<!-- @split: 00-intro/evolution.md -->
-# 单片机的发展演化
+<!-- @split: 01-hardware/cpu-arch.md -->
+# 单片机的大脑 — CPU 架构
 (内容)
 
-<!-- @split: 00-intro/what-is-mcu.md -->
-# 什么是单片机
+<!-- @split: 01-hardware/ram-rom.md -->
+# 单片机的记忆 — RAM 与 ROM
 (内容)
 ```
 
@@ -39,7 +39,6 @@
 
 | 目录 | 篇章 |
 |------|------|
-| `00-intro/` | 第〇篇：认识单片机 |
 | `01-hardware/` | 第一篇：硬件基础 |
 | `02-connection/` | 第二篇：电脑如何连接单片机 |
 | `03-tools/` | 第三篇：开发工具与工程结构 |
@@ -57,7 +56,7 @@
 
 `docs/.vitepress/config.mts` 的 `base` 必须保持为 `/training/`，与 GitHub Pages 部署路径一致。
 
-侧边栏链接格式：`/00-intro/what-is-mcu`（对应 `docs/00-intro/what-is-mcu.md`）
+侧边栏链接格式：`/01-hardware/cpu-arch`（对应 `docs/01-hardware/cpu-arch.md`）
 
 新增文章时，需要在 `config.mts` 侧边栏添加对应条目。
 

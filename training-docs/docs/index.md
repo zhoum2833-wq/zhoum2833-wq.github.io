@@ -8,10 +8,10 @@ hero:
   actions:
     - theme: brand
       text: 开始学习
-      link: /00-intro/what-is-mcu
+      link: /01-hardware/cpu-arch
     - theme: alt
       text: 章节概览
-      link: /00-intro/what-is-mcu
+      link: /01-hardware/cpu-arch
 
 features:
   - icon: "🧠"

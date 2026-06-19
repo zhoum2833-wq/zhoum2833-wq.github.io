@@ -9,17 +9,10 @@ export default defineConfig({
   themeConfig: {
     nav: [
       { text: '首页', link: '/' },
-      { text: '开始学习', link: '/00-intro/what-is-mcu' },
+      { text: '开始学习', link: '/01-hardware/cpu-arch' },
     ],
 
     sidebar: [
-      {
-        text: '第〇篇：认识单片机',
-        items: [
-          { text: '0.1 什么是单片机', link: '/00-intro/what-is-mcu' },
-          { text: '0.2 单片机的发展演化', link: '/00-intro/evolution' },
-        ]
-      },
       {
         text: '第一篇：硬件基础',
         items: [

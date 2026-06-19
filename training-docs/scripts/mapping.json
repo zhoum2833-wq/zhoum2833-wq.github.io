@@ -1,9 +1,5 @@
 {
   ".vitepress": {},
-  "00-intro": {
-    "evolution": "单片机的发展演化",
-    "what-is-mcu": "什么是单片机"
-  },
   "01-hardware": {
     "cpu-arch": "单片机的大脑 — CPU 架构",
     "electrical": "引脚电气数据 — 能接什么，不能接什么",

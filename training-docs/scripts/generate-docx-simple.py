@@ -11,7 +11,6 @@ SRC  = os.path.join(ROOT, '电赛入门指南.md')
 OUT  = os.path.abspath(os.path.join(ROOT, 'output', '电赛入门指南.docx'))
 
 CHAPTER_NAMES = {
-    '00-intro': '第零篇：认识单片机',
     '01-hardware': '第一篇：硬件基础',
     '02-connection': '第二篇：电脑如何连接单片机',
     '03-tools': '第三篇：开发工具与工程结构',
