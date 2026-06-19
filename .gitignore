@@ -3,6 +3,13 @@
 /resources/
 .hugo_build.lock
 
+# Training docs (VitePress) — 构建产物，CI 自动生成
+/training-docs/node_modules/
+/training-docs/docs/.vitepress/dist/
+/training-docs/docs/.vitepress/cache/
+/static/training/
+/static/电赛入门指南.docx
+
 # OS
 .DS_Store
 Thumbs.db

@@ -6,9 +6,11 @@
 
 不要直接修改 `docs/` 下的文件——每次运行 `update.bat` 时，`scripts/split-md.py` 会自动把大文件拆回 `docs/` 供 VitePress 使用。
 
-## 编辑后同步
+## 编辑后必须同步
 
-修改 `电赛入门指南.md` 后，双击 `update.bat` 一键完成：
+**修改 `电赛入门指南.md` 后，必须立即运行 `update.bat`**，否则网站和文档不会更新。无论是人还是 AI 编辑，都要执行这一步。
+
+`update.bat` 一键完成：
 
 1. 拆分 → `docs/` 各章节目录
 2. 重建 VitePress 站点 → `output/site/`

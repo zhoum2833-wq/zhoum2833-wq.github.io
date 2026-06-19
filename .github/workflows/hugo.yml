@@ -1,7 +1,7 @@
 # ============================================================
-# GitHub Actions · 自动部署 Hugo 到 GitHub Pages
+# GitHub Actions · Hugo 博客 + 电赛培训文档 + Word 文档
 # ============================================================
-name: Deploy Hugo Blog to GitHub Pages
+name: Deploy to GitHub Pages
 
 on:
   push:
@@ -26,23 +26,74 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
 
     steps:
+      # ==================== 检出代码 ====================
       - name: Checkout
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
+      # ==================== 构建 VitePress 培训文档 ====================
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Split source to docs/
+        run: |
+          cd training-docs
+          python scripts/split-md.py
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Install VitePress dependencies
+        run: |
+          cd training-docs
+          npm install
+
+      - name: Build VitePress docs
+        run: |
+          cd training-docs
+          npm run docs:build
+
+      - name: Copy training docs to static
+        run: |
+          mkdir -p static/training
+          cp -r training-docs/docs/.vitepress/dist/* static/training/
+
+      # ==================== 生成 Word 文档 ====================
+      - name: Install Python dependencies
+        run: pip install python-docx
+
+      - name: Generate Word document
+        run: |
+          cd training-docs
+          python scripts/generate-docx-simple.py
+          mkdir -p ../static
+          cp output/电赛入门指南.docx ../static/
+
+      # ==================== 构建 Hugo 博客 ====================
       - name: Setup Hugo
         uses: peaceiris/actions-hugo@v3
         with:
           hugo-version: "0.148.2"
           extended: true
 
-      - name: Build
+      - name: Build Hugo site
         run: hugo --minify --gc
 
+      # ==================== 验证产物 ====================
       - name: Show public dir structure
-        run: find public -type f | sort
+        run: |
+          echo "=== 培训文档 ==="
+          find public/training -type f | head -20
+          echo ""
+          echo "=== docx 文件 ==="
+          find public -name "*.docx" -type f
 
+      # ==================== 部署到 GitHub Pages ====================
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
