@@ -42,8 +42,7 @@ MyProject/
 │           ├── stm32f1xx_hal_gpio.c
 │           └── ...             ← 各外设 HAL 库源代码
 ├── .ioc                        ← CubeMX 工程文件（双击重新打开配置界面）
-├── Makefile                    ← 编译规则文件
-├── STM32F103C8Tx_FLASH.ld      ← 链接脚本（告诉链接器内存布局）
+├── MDK-ARM/                    ← Keil5 工程文件夹（含 .uvprojx）
 └── Drivers/CMSIS/              ← ARM 内核标准接口（与 ST 无关）
 ```
 
@@ -161,8 +160,7 @@ void USART1_IRQHandler(void)
 | `Core/Inc/main.h` | 能（仅标记之间） | 主头文件 |
 | `Drivers/` 下所有文件 | **绝对不能** | ST 和 ARM 官方代码 |
 | `startup_stm32f103c8tx.s` | **绝对不能** | 启动汇编文件 |
-| `STM32F103C8Tx_FLASH.ld` | 谨慎（一般不改） | 链接脚本 |
-| `Makefile` | 能（如果懂的话） | 编译规则 |
+| `MDK-ARM/` | Keil5 自己管 | 编译和下载配置 |
 | `.ioc` | 用 CubeMX 打开 | 配置文件 |
 
 ## 小结

@@ -66,45 +66,25 @@ CubeMX 的引脚配置界面是一个**芯片的俯视图**，每个引脚都标
 想象你要开一家餐厅。CubeMX 帮你完成了基础装修——接通水电煤气（时钟初始化）、安装好灶台和冰箱的位置（外设初始化）、装好收银机和排号系统（中断配置）。但这家餐厅开的是川菜还是日料、具体怎么做菜（程序逻辑），完全由你决定。
 :::
 
-## CubeMX + VS Code 的工作流
-
-在实际开发中，CubeMX 和 VS Code 是这样配合的：
+## CubeMX + Keil5 + VS Code 工作流
 
 ```
 第一步：打开 CubeMX
-  → 选择你的 MCU 型号（如 STM32F103C8T6）
+  → 选择 MCU 型号
   → 配置时钟树
-  → 配置引脚功能
-  → 配置外设参数
-  → 设置 Toolchain 为 Makefile（重要！）
+  → 配置引脚功能和外设参数
+  → Toolchain 选 MDK-ARM（即 Keil5）
   → 点击 GENERATE CODE
 
-第二步：等待代码生成完成
-  → CubeMX 在指定文件夹生成一整套代码
+第二步：VS Code 打开生成的文件夹
+  → 在 USER CODE BEGIN/END 之间写应用代码
+  → 配合 AI（Claude Code）编辑
 
-第三步：在 VS Code 中打开生成的文件夹
-  → VS Code 自动识别 Makefile 工程
-  → 在 USER CODE BEGIN / END 标记之间写你的应用代码
-  → 按 Ctrl+Shift+B 编译
-  → 输入 make flash 下载到单片机
+第三步：Keil5 打开 .uvprojx
+  → 编译
+  → 下载/调试
 ```
 
-## 如果你用的是 MSPM0（TI 的芯片）
+## MSPM0 用户
 
-MSPM0 是德州仪器（TI）的 Cortex-M0+ 单片机。TI 不提供 CubeMX，但它有一个类似的工具叫 **SysConfig**。
-
-SysConfig 的操作逻辑和 CubeMX **非常相似**——图形化引脚分配、外设配参数、生成初始化代码。学会了 CubeMX 的思维模式，切换到 SysConfig 只需要适应一下界面，概念是通用的。
-
-::: warning CubeMX ≠ 单片机开发的全部
-CubeMX 帮你处理了"配置"这个体力活，但它不教你：
-- C 语言怎么写。
-- HAL 库的 API 怎么用。
-- 程序逻辑怎么设计。
-- Bug 怎么排查。
-
-这些才是你真正需要花时间学习的内容。工具只是工具，核心能力在你自己。
-:::
-
-## 小结
-
-STM32CubeMX 是 ST 官方提供的图形化配置工具。它让你点击界面而不是手写代码来配置时钟、引脚和外设，然后自动生成初始化代码。你可以把它理解为嵌入式开发的"基础装修队"——它不让你的程序有灵魂，但它让一切准备就绪，方便你直接开始干活。
+MSPM0 使用 TI 的 **SysConfig**，操作逻辑和 CubeMX 类似，图形化配引脚、外设、时钟，生成 Keil 工程。
