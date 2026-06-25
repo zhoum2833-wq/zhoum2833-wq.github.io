@@ -6,6 +6,80 @@ title: Git 团队协作
 
 三个人同时写代码，怎么才能不互相覆盖？Git 就是为了解决这个问题的。它像一个**带时间机器的共享文件夹**——每个人都能看到完整的历史记录，谁改了哪一行、什么时候改的，都有据可查。
 
+## Git 下载与安装
+
+先说怎么把 Git 装到你电脑上。
+
+### Windows
+
+1. 打开浏览器，访问 [git-scm.com](https://git-scm.com/)
+2. 网站会自动识别你的系统，点击 **Download for Windows**（蓝色按钮）
+3. 下载的是一个 `.exe` 安装文件，双击运行
+4. 安装过程**一路点 Next 用默认选项即可**，只有一步需要你选择：
+
+| 选项页面 | 建议选择 | 原因 |
+|----------|----------|------|
+| 默认编辑器（Default Editor） | **Use Visual Studio Code as Git's default editor** | 之后 commit 时如果需要在编辑器中写说明，会用 VS Code 打开，比 Vim 友好得多 |
+| 调整 PATH 环境 | **Git from the command line and also from 3rd-party software**（默认） | 让终端和 VS Code 都能找到 `git` 命令 |
+| 行尾符转换 | **Checkout Windows-style, commit Unix-style line endings**（默认） | 团队里有人用 macOS/Linux 时不会因为换行符不同而出乱子 |
+| 终端模拟器 | **Use MinTTY**（默认） | Git Bash 窗口更好看、支持中文 |
+
+其余页面全部点 Next，最后点 Install。
+
+安装完成后，在桌面空白处**右键**——你会在菜单中看到两项新增：
+
+> **Git Bash Here**
+> **Git GUI Here**
+
+验证安装：
+
+```bash
+git --version
+# 输出类似 → git version 2.47.0.windows.1
+```
+
+看到版本号就说明装好了。
+
+::: tip Git Bash = Windows 上的 Linux 终端
+Git 安装时会附带 **Git Bash**——一个在 Windows 上运行的 Linux 风格终端，内置支持 `ls`、`grep`、`find`、`ssh`、`make` 等命令。之后在 VS Code 中配置默认终端，就选它。
+:::
+
+### macOS
+
+打开终端，输入：
+
+```bash
+git --version
+```
+
+如果没装，系统会自动提示你安装 Xcode Command Line Tools（包含 Git），点「安装」即可。
+
+或者用 Homebrew：
+
+```bash
+brew install git
+```
+
+### Linux (Ubuntu / Debian)
+
+```bash
+sudo apt update
+sudo apt install git
+```
+
+## 首次配置：告诉 Git 你是谁
+
+装好 Git 后必须做一件事——设置你的**姓名和邮箱**。你之后的每次提交（commit）都会带上这些信息，队友看到记录就知道是谁改的：
+
+```bash
+git config --global user.name "你的姓名"        # 比如 "张三"
+git config --global user.email "你的邮箱@qq.com"  # 用你注册 GitHub 的邮箱
+```
+
+`--global` 表示全局配置，这台电脑上的所有项目共用。配置存储在 `C:\Users\你的用户名\.gitconfig`（Windows）或 `~/.gitconfig`（macOS/Linux）中，随时可以改。
+
+到此 Git 环境就准备好了。接下来看看它的核心概念和团队协作方式。
+
 ## 基本概念
 
 Git 不是网盘。它的核心是"版本"，而非"文件"。每次你执行 `git commit`，就像给当前代码状态拍了一张快照，并且附上一段说明。

@@ -20,9 +20,78 @@ VS Code（Visual Studio Code）是目前最流行的代码编辑器。它不是 
 打开 VS Code，点击左侧的扩展图标（四个方块），搜索并安装以下插件：
 
 1. **C/C++ (Microsoft)** — 代码补全、语法高亮、函数跳转。没有它，C 代码就是纯黑色文本。
-2. **Cortex-Debug (marus25)** — 配合 JLink 进行断点调试。
-3. **Claude Code (Anthropic)** — AI 助手，可以在编辑器内使用 AI 编写代码。
-4. **Error Lens** — 把编译错误直接显示在代码行末尾，不用切到终端看错误信息。
+2. **Cortex-Debug (marus25)** — ARM Cortex 调试器，支持 STlink、DAPLink、JLink 等调试探针，可在 VS Code 内设断点、查看变量和寄存器。
+3. **Claude Code (Anthropic)** — AI 编程助手，在编辑器内用自然语言让 AI 写代码、查 bug、解释逻辑。
+4. **Serial Monitor (Microsoft)** — 串口监视器，在 VS Code 底部面板直接查看单片机发来的串口数据，不用额外开串口助手。
+
+## 调试器：STlink 与 DAPLink
+
+在电赛中，你日常接触的调试器就是这两款。它们的功能一样——通过 USB 连接电脑和单片机，实现**下载程序**和**断点调试**。
+
+| 调试器 | 适用芯片 | 参考价格 | 特点 |
+|--------|----------|----------|------|
+| **STlink** | STM32 全系列（F1/F4/G4/H7 等） | ~20 元 / 开发板自带 | ST 官方调试器，STM32 用户首选 |
+| **DAPLink** (CMSIS-DAP) | 几乎所有 Cortex-M 芯片 | ~15 元 / 部分开发板自带 | ARM 开源方案，通用性最强 |
+
+### STlink
+
+STlink 是 ST 公司为 STM32 设计的专用调试器。如果你用的是 STM32 开发板（如 STM32F407、STM32G431），板子上通常已经集成了 STlink——插上 USB 线就能用。
+
+**在 VS Code 中使用 STlink：**
+
+1. 安装 **STM32CubeIDE**（免费，内含 `ST-LINK_gdbserver`）或单独下载 [ST-LINK GDB Server](https://www.st.com/en/development-tools/st-link-server.html)
+2. Cortex-Debug 插件通过 GDB Server 连接 STlink
+3. 连接方式：SWD（仅需两根线——SWCLK + SWDIO，外加 GND）
+
+### DAPLink
+
+DAPLink（原名 CMSIS-DAP）是 ARM 官方的开源调试器方案。它不像 STlink 只绑定 STM32——DAPLink 几乎兼容所有 Cortex-M 内核的单片机。国产芯片（如 GD32、MM32）和各种 MSPM0 开发板，板载调试器大都是 DAPLink 或其变体。
+
+**在 VS Code 中使用 DAPLink：**
+
+1. 安装 **pyOCD**（终端执行 `pip install pyocd`）或 **OpenOCD**（`scoop install openocd` / 官网下载）
+2. Cortex-Debug 插件通过 pyOCD 或 OpenOCD 连接 DAPLink
+3. 同样是 SWD 两线连接
+
+::: tip 开发板自带调试器，不用额外买
+现在绝大多数开发板都**板载了调试器芯片**。看 USB 口旁边的小芯片——如果是 STM32F103C8T6，它很可能被烧录成了 STlink 或 DAPLink 固件。你直接用 USB 线连上电脑就能下载和调试。
+:::
+
+### launch.json 配置示例
+
+Cortex-Debug 插件的调试配置写在工作区的 `.vscode/launch.json` 中。以下是两种调试器的典型配置：
+
+**使用 STlink（搭配 ST-LINK GDB Server）：**
+
+```json
+{
+    "name": "Debug (STlink)",
+    "type": "cortex-debug",
+    "request": "launch",
+    "servertype": "stlink",
+    "cwd": "${workspaceRoot}",
+    "executable": "./build/firmware.elf",
+    "device": "STM32G431CB",
+    "svdFile": "./STM32G431.svd"
+}
+```
+
+**使用 DAPLink（搭配 pyOCD）：**
+
+```json
+{
+    "name": "Debug (DAPLink)",
+    "type": "cortex-debug",
+    "request": "launch",
+    "servertype": "pyocd",
+    "cwd": "${workspaceRoot}",
+    "executable": "./build/firmware.elf",
+    "device": "STM32G431CB",
+    "svdFile": "./STM32G431.svd"
+}
+```
+
+`device` 填你的芯片型号，`svdFile` 是外设寄存器描述文件（可从芯片厂商官网下载），有了它才能在调试时直接查看 GPIO、定时器、ADC 等外设寄存器的值。
 
 ## .vscode/settings.json
 
