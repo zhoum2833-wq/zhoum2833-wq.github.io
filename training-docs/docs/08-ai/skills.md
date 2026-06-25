@@ -61,7 +61,7 @@ docx skill 会帮你排版成规范的 Word 文档。
 
 ## 小结
 
-Skills 是 DeepSeek V4 Pro 的"感官系统"——纯文本模型本身看不到图、听不到声，但通过 deepseek-vision 等 Skill，它获得了看图、生成文档等多模态能力。记住 Skills 调用的关键词和触发条件，你就能让 AI 在合适的场景自动"戴上眼镜"或"拿起笔"。
+Skills 是 DeepSeek V4 Pro 的"感官系统"——纯文本模型本身看不到图、听不到声，通过 deepseek-vision 等 Skill 补上这些能力。知道哪些关键词触发哪个 Skill，AI 就能在合适的场景自动"戴上眼镜"或"拿起笔"。
 
 > **纯文本模型 + deepseek-vision = 近视的人戴上眼镜**
 
