@@ -58,6 +58,10 @@ Claude Code 插件的配置写在 VS Code 的 `settings.json` 里，不需要去
 
 ```json
 {
+    "claudeCode.preferredLocation": "panel",
+    "claudeCode.disableLoginPrompt": true,
+    "claudeCode.initialPermissionMode": "bypassPermissions",
+
     "claudeCode.environmentVariables": [
         {
             "name": "ANTHROPIC_AUTH_TOKEN",
@@ -78,52 +82,55 @@ Claude Code 插件的配置写在 VS Code 的 `settings.json` 里，不需要去
         {
             "name": "API_TIMEOUT_MS",
             "value": "600000"
+        },
+        {
+            "name": "CLAUDE_CODE_EFFORT_LEVEL",
+            "value": "max"
+        },
+        {
+            "name": "ANTHROPIC_DEFAULT_SONNET_MODEL",
+            "value": "deepseek-v4-pro"
+        },
+        {
+            "name": "ANTHROPIC_DEFAULT_OPUS_MODEL",
+            "value": "deepseek-v4-pro"
+        },
+        {
+            "name": "ANTHROPIC_DEFAULT_HAIKU_MODEL",
+            "value": "deepseek-v4-flash"
         }
     ]
 }
 ```
 
-**关键字段说明：**
+**面板设置：**
 
-| 变量名 | 含义 | 值 |
-|--------|------|-----|
-| `ANTHROPIC_AUTH_TOKEN` | API 密钥 | 粘贴你的 DeepSeek API Key（`sk-` 开头） |
-| `ANTHROPIC_BASE_URL` | DeepSeek 兼容接口地址 | `https://api.deepseek.com/anthropic`（末尾有 `/anthropic`） |
-| `ANTHROPIC_MODEL` | 主模型 | `deepseek-v4-pro[1m]`（`[1m]` 表示 100 万 token 上下文） |
-| `ANTHROPIC_SMALL_FAST_MODEL` | 辅助小模型（处理简单任务，更快更省） | `deepseek-v4-flash` |
-| `API_TIMEOUT_MS` | 请求超时时间（毫秒） | `600000`（10 分钟，复杂任务需要更长时间） |
+| 设置项 | 值 | 作用 |
+|--------|-----|------|
+| `claudeCode.preferredLocation` | `"panel"` | Claude Code 在底部面板打开，不占侧边栏位置 |
+| `claudeCode.disableLoginPrompt` | `true` | 跳过 Anthropic 登录（用 DeepSeek，不需要 Anthropic 账号） |
+| `claudeCode.initialPermissionMode` | `"bypassPermissions"` | 跳过每次操作的确认弹窗（AI 直接执行，省得一直点 Allow） |
+
+**环境变量：**
+
+| 变量名 | 值 | 作用 |
+|--------|-----|------|
+| `ANTHROPIC_AUTH_TOKEN` | `sk-你的Key` | DeepSeek API 密钥 |
+| `ANTHROPIC_BASE_URL` | `https://api.deepseek.com/anthropic` | DeepSeek 兼容接口（末尾有 `/anthropic`） |
+| `ANTHROPIC_MODEL` | `deepseek-v4-pro[1m]` | 主模型，`[1m]` = 100 万 token 上下文 |
+| `ANTHROPIC_SMALL_FAST_MODEL` | `deepseek-v4-flash` | 辅助小模型，处理简单任务更快更省 |
+| `API_TIMEOUT_MS` | `600000` | 请求超时 10 分钟，复杂任务不会中途断掉 |
+| `CLAUDE_CODE_EFFORT_LEVEL` | `max` | AI 思考深度拉满，代码质量最高 |
+| `ANTHROPIC_DEFAULT_SONNET_MODEL` | `deepseek-v4-pro` | 选 Sonnet 模型时路由到 DeepSeek |
+| `ANTHROPIC_DEFAULT_OPUS_MODEL` | `deepseek-v4-pro` | 选 Opus 模型时路由到 DeepSeek |
+| `ANTHROPIC_DEFAULT_HAIKU_MODEL` | `deepseek-v4-flash` | 选 Haiku 模型时路由到 DeepSeek |
 
 ::: warning 注意
 - 变量名是 **`ANTHROPIC_AUTH_TOKEN`**，不是 `ANTHROPIC_API_KEY`
 - 接口地址末尾有 **`/anthropic`**，不是裸的 `api.deepseek.com`
+- 三个 `DEFAULT_*_MODEL` 必须配——否则切换到 Sonnet/Opus/Haiku 时会报错，因为没有 Anthropic 原生模型
 - 保存 settings.json 后**重启 VS Code** 使配置生效
 :::
-
-### 可选：更高配置
-
-如果你想让 AI 思考更深、输出更充分，可以额外加上这些变量：
-
-```json
-{
-    "name": "CLAUDE_CODE_EFFORT_LEVEL",
-    "value": "max"
-},
-{
-    "name": "ANTHROPIC_DEFAULT_SONNET_MODEL",
-    "value": "deepseek-v4-pro"
-},
-{
-    "name": "ANTHROPIC_DEFAULT_OPUS_MODEL",
-    "value": "deepseek-v4-pro"
-},
-{
-    "name": "ANTHROPIC_DEFAULT_HAIKU_MODEL",
-    "value": "deepseek-v4-flash"
-}
-```
-
-- `CLAUDE_CODE_EFFORT_LEVEL` 设为 `max`，AI 会多花时间思考，代码质量更高（但更慢更贵）
-- 三个 `DEFAULT_*_MODEL` 告诉插件：不管用户选什么模型，都路由到 DeepSeek（避免因没有 Anthropic 原生模型而报错）
 
 ## 验证配置
 
