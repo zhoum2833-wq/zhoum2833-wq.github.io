@@ -15,14 +15,12 @@ title: Git 团队协作
 1. 打开浏览器，访问 [git-scm.com](https://git-scm.com/)
 2. 网站会自动识别你的系统，点击 **Download for Windows**（蓝色按钮）
 3. 下载的是一个 `.exe` 安装文件，双击运行
-4. 安装过程**一路点 Next 用默认选项即可**，只有一步需要你选择：
+4. 安装过程**一路点 Next 用默认选项即可**。唯一可能让你犹豫的是这几个选项页——选默认就对了：
 
-| 选项页面 | 建议选择 | 原因 |
-|----------|----------|------|
-| 默认编辑器（Default Editor） | **Use Visual Studio Code as Git's default editor** | 之后 commit 时如果需要在编辑器中写说明，会用 VS Code 打开，比 Vim 友好得多 |
-| 调整 PATH 环境 | **Git from the command line and also from 3rd-party software**（默认） | 让终端和 VS Code 都能找到 `git` 命令 |
-| 行尾符转换 | **Checkout Windows-style, commit Unix-style line endings**（默认） | 团队里有人用 macOS/Linux 时不会因为换行符不同而出乱子 |
-| 终端模拟器 | **Use MinTTY**（默认） | Git Bash 窗口更好看、支持中文 |
+- **默认编辑器** → 选 **Use Visual Studio Code as Git's default editor**：commit 写说明时用 VS Code 打开，比 Vim 友好
+- **调整 PATH 环境** → 默认 **Git from the command line and also from 3rd-party software**：让终端和 VS Code 都能找到 `git`
+- **行尾符转换** → 默认 **Checkout Windows-style, commit Unix-style line endings**：跨平台协作不会因换行符出问题
+- **终端模拟器** → 默认 **Use MinTTY**：Git Bash 窗口更好看、支持中文
 
 其余页面全部点 Next，最后点 Install。
 
