@@ -74,6 +74,16 @@ jobs:
           mkdir -p ../static
           cp output/电赛入门指南.docx ../static/
 
+      # ==================== 生成 PDF 文档 ====================
+      - name: Install LibreOffice (for PDF conversion)
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq libreoffice-writer
+
+      - name: Generate PDF document
+        run: |
+          cd training-docs
+          python scripts/generate-pdf.py
+          cp output/电赛入门指南.pdf ../static/
+
       # ==================== 构建 Hugo 博客 ====================
       - name: Setup Hugo
         uses: peaceiris/actions-hugo@v3

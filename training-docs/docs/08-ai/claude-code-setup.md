@@ -167,3 +167,10 @@ Claude Code 插件的配置写在 VS Code 的 `settings.json` 里，不需要去
 ## 下一步
 
 配置搞定。接下来了解 Claude Code 的核心概念、常用命令和典型工作流——见下一章「Claude Code + DeepSeek V4 Pro」。
+
+## 小结
+
+VS Code 的核心概念只有三个：工作区（文件夹）、命令面板（Ctrl+Shift+P）、终端（Ctrl+`）。学会用命令面板而不是菜单栏，你的效率会提升一个档次。记住：高手基本不碰鼠标。
+## 小结
+
+Claude Code 有 VS Code 插件版，不需要装 Node.js、不用敲命令行——在扩展商店搜索安装即可。配置好 API key 后，按 Ctrl+Shift+P 输入 "Claude: Open Chat" 就能开始 AI 辅助编程。

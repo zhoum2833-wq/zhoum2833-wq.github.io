@@ -75,7 +75,7 @@ features:
         path = parts[i]
         body = parts[i + 1].strip()
 
-        # path format: "00-intro/what-is-mcu.md"
+        # path format: "01-hardware/cpu-arch.md"
         match = re.match(r'^([^/]+)/(.+)$', path)
         if not match:
             print(f"  WARN: invalid path {path}")
@@ -107,6 +107,31 @@ features:
         count += 1
 
     print(f"  {count} files written to docs/")
+
+    # --- 清理孤儿文件 ---
+    # 收集本次生成的所有文件路径
+    expected = set()
+    for i in range(1, len(parts), 2):
+        path = parts[i]
+        expected.add(path)
+
+    # 遍历 docs/ 下所有 .md 文件，删除不在预期列表中的
+    orphan_count = 0
+    for root, dirs, files in os.walk(DOCS):
+        for f in files:
+            if not f.endswith('.md'):
+                continue
+            rel = os.path.relpath(os.path.join(root, f), DOCS).replace('\\', '/')
+            if rel in expected or rel == 'index.md':
+                continue
+            orphan = os.path.join(root, f)
+            print(f"  [clean] removing orphan: {rel}")
+            os.remove(orphan)
+            orphan_count += 1
+
+    if orphan_count > 0:
+        print(f"  {orphan_count} orphan file(s) removed")
+    # ---
 
 
 if __name__ == '__main__':

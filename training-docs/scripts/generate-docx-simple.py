@@ -196,7 +196,7 @@ def main():
         path = parts[i]
         body = parts[i + 1].strip()
 
-        # path format: "00-intro/what-is-mcu.md"
+        # path format: "01-hardware/cpu-arch.md"
         match = re.match(r'^([^/]+)/(.+)$', path)
         if not match:
             continue

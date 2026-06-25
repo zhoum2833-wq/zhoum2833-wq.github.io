@@ -289,6 +289,6 @@ make clean    # 清理
 初次使用 VS Code 的终端时，注意终端类型要和系统匹配。Windows 上建议使用 Git Bash（安装 Git 时附带）作为默认终端，因为 `make` 等命令在 cmd 和 PowerShell 中可能默认找不到。
 :::
 
----
+## 小结
 
-# 第九篇：PCB 设计
+VS Code 的核心概念只有三个：工作区（文件夹）、命令面板（Ctrl+Shift+P）、终端（Ctrl+\`）。学会用命令面板而不是菜单栏，你的效率会提升一个档次。插件生态是 VS Code 的最大优势——C/C++ 开发套件和 Claude Code 是你电赛开发中最重要的两个插件。

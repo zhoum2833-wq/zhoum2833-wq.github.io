@@ -96,3 +96,7 @@ VS Code 自带终端（快捷键 `` Ctrl+` ``），但 Windows 默认的 PowerSh
 ## 下一步
 
 环境搭好了。接下来看看 VS Code 有哪些必装插件、实用操作和快捷键——见下一章「VS Code — 你的 AI 编程环境」。
+
+## 小结
+
+VS Code 是你 AI 编程的"驾驶舱"。安装时注意勾选"添加到 PATH"和"通过 Code 打开"，装完后打开终端验证 `code --version`。中文语言包和 Claude Code 插件是必装的，其他的按需添加。
