@@ -56,6 +56,50 @@ DAPLink（原名 CMSIS-DAP）是 ARM 官方的开源调试器方案。它不像 
 现在绝大多数开发板都**板载了调试器芯片**。看 USB 口旁边的小芯片——如果是 STM32F103C8T6，它很可能被烧录成了 STlink 或 DAPLink 固件。你直接用 USB 线连上电脑就能下载和调试。
 :::
 
+## 调试依赖链：Cortex-Debug 不是"一个插件就够"
+
+很多人装完 Cortex-Debug 插件，按 F5 直接报错，就以为"这插件不好用"。其实 Cortex-Debug 只是冰山最上面的一角——它下面还有一整条依赖链。五样东西，缺一不可：
+
+```
+VS Code 界面（你操作的）
+    ↓
+Cortex-Debug 插件（在 VS Code 里画断点、变量面板）
+    ↓
+arm-none-eabi-gdb（GDB 客户端，解析调试指令）
+    ↓
+GDB Server / OpenOCD / pyOCD（翻译官，把 GDB 指令转成硬件信号）
+    ↓
+调试器硬件（STlink / DAPLink / JLink，通过 USB 连接电脑）
+    ↓
+单片机（目标芯片，通过 SWD 两线连接）
+```
+
+| 组件 | 是什么 | 怎么装 |
+|------|--------|--------|
+| **Cortex-Debug 插件** | VS Code 里的"调试面板"，你把断点点在哪行、想看哪个变量，它负责画界面 | VS Code 扩展商店搜索 `Cortex-Debug`（marus25） |
+| **ARM 编译链** | 包含 `arm-none-eabi-gcc`（编译）和 **`arm-none-eabi-gdb`**（调试用的 GDB 客户端） | [ARM 官网](https://developer.arm.com/downloads/-/arm-gnu-toolchain-downloads) 下载 Windows `.exe` 安装包，安装时**勾选「Add to PATH」** |
+| **GDB Server / OpenOCD / pyOCD** | 翻译官——GDB 说的是一套通用协议，STlink/DAPLink 各有各的"方言"，翻译官在中间做转换 | STlink → STM32CubeIDE 自带的 `ST-LINK_gdbserver` / DAPLink → `pip install pyocd` 或装 OpenOCD |
+| **调试器硬件** | STlink、DAPLink、JLink 实体，一端 USB 插电脑、一端 SWD 连单片机 | 开发板自带或淘宝 ~15-20 元 |
+| **单片机** | 你写的代码跑在它上面 | 开发板上的主芯片 |
+
+**被漏掉最多的就是 `arm-none-eabi-gdb`。** 很多人以为装了 OpenOCD 就齐了，结果 F5 报 "Failed to start GDB"——因为 GDB 客户端根本不在系统里。
+
+装完编译链后，打开终端验证：
+
+```bash
+arm-none-eabi-gdb --version
+# 必须输出版本号，如 GNU gdb ... 12.1 ...
+# 如果提示"不是内部命令"，说明没装或没加 PATH
+```
+
+::: warning 这个报错最常见
+**"Failed to launch GDB: arm-none-eabi-gdb not found"**
+
+→ 三个可能：① 没装 ARM 编译链 ② 装了但没勾「Add to PATH」③ 装了也勾了但没重启终端。去系统环境变量里确认 `arm-none-eabi-gdb.exe` 所在目录在 PATH 里，然后**关掉所有终端重新打开**。
+:::
+
+下面按步骤把这条路走通。
+
 ### 第一步：确认调试器被电脑识别
 
 先把调试器用 USB 线连上电脑，然后验证系统是否认到了它。
