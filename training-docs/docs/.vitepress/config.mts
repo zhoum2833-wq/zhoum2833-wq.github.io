@@ -87,12 +87,14 @@ export default defineConfig({
       {
         text: '第八篇：AI 编程',
         items: [
-          { text: '8.1 VS Code 环境', link: '/08-ai/vscode' },
-          { text: '8.2 Claude Code + DS V4', link: '/08-ai/claude-code' },
-          { text: '8.3 Git 团队协作', link: '/08-ai/git' },
-          { text: '8.4 AI 基础知识', link: '/08-ai/ai-basics' },
-          { text: '8.5 与 AI 正确聊天', link: '/08-ai/prompting' },
-          { text: '8.6 Skills 与多模态', link: '/08-ai/skills' },
+          { text: '8.1 VS Code 下载安装', link: '/08-ai/vscode-install' },
+          { text: '8.2 VS Code 编程环境', link: '/08-ai/vscode' },
+          { text: '8.3 Claude Code 环境配置', link: '/08-ai/claude-code-setup' },
+          { text: '8.4 Claude Code + DS V4', link: '/08-ai/claude-code' },
+          { text: '8.5 AI 基础知识', link: '/08-ai/ai-basics' },
+          { text: '8.6 与 AI 正确聊天', link: '/08-ai/prompting' },
+          { text: '8.7 Skills 与多模态', link: '/08-ai/skills' },
+          { text: '8.8 Git 团队协作', link: '/08-ai/git' },
         ]
       },
       {
