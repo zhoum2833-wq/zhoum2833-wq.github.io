@@ -4,11 +4,11 @@ title: Claude Code + DeepSeek V4 Pro
 
 # Claude Code + DeepSeek V4 Pro
 
-Claude Code 是 Anthropic 公司开发的命令行 AI 编程助手。它不是一个图形界面软件，而是一个运行在终端里的 AI——能读代码、写代码、执行命令。你的 Claude Code 使用的是 DeepSeek V4 Pro 作为后端模型。
+Claude Code 是 Anthropic 公司开发的 AI 编程助手。它以 **VS Code 插件**的形式运行，直接嵌在编辑器侧边栏里——能读代码、写代码、执行终端命令。你的 Claude Code 使用的是 DeepSeek V4 Pro 作为后端模型。
 
 ## 核心概念
 
-Claude Code 就像一个**会写代码的终端助手**。你对它说"帮我写一个读取陀螺仪数据的函数"，它会：
+Claude Code 就像一个**嵌在编辑器里的 AI 搭档**。你对它说"帮我写一个读取陀螺仪数据的函数"，它会：
 
 1. 读取项目中相关的文件（理解你的代码风格和接口）
 2. 生成代码
@@ -56,14 +56,19 @@ Claude Code 使用斜杠命令来控制行为：
 不要用 `/effort max` 来处理简单的语法问题。就像杀鸡用牛刀——既慢又贵。简单问题用默认模式即可。
 :::
 
-## CLI（命令行界面）的优势
+## 在 VS Code 中使用 Claude Code
 
-Claude Code 选择命令行而非图形界面，这有几个好处：
+Claude Code 插件安装后，点击左侧的 Claude Code 图标即可打开对话面板。你可以把它拖到右侧、底部，或者保持侧边栏——怎么顺手怎么来。
 
-- **批量操作**：可以用 Shell 脚本一次性改多个文件（如 `for f in *.c; do ... done`）
-- **远程访问**：通过 SSH 在远程服务器上使用
-- **轻量**：没有 GUI 的卡顿和资源消耗
-- **可脚本化**：可以集成到自动化流水线中
+在对话面板中，你不仅能用自然语言聊天，还能直接拖入文件、图片（需要 deepseek-vision skill 支持）让 AI 分析。AI 生成的代码会以 diff 形式展示，你逐段审核确认后才写入文件，不会悄无声息地改你的代码。
+
+::: tip 建议配置
+在 settings.json 中加上这两行，体验更好：
+```json
+"claudeCode.preferredLocation": "panel",      // 在底部面板打开，不占侧边栏位置
+"claudeCode.disableLoginPrompt": true,        // 跳过 Anthropic 登录（你用的是 DeepSeek，不需要登录）
+```
+:::
 
 ## 典型工作流
 
