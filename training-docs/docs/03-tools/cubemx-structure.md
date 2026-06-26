@@ -99,7 +99,7 @@ int main(void)
 注意这些特殊的注释标记：`/* USER CODE BEGIN 0 */` 和 `/* USER CODE END 0 */`。**只有这些标记之间的代码，CubeMX 重新生成时才会保留！**
 
 ::: danger 写在标记外面，代码会被覆盖！
-如果你把代码写在 `USER CODE BEGIN 2` 和 `USER CODE END 2` 之外，下次用 CubeMX 修改配置并重新生成时，你的代码会被无情地抹掉。这是一个几乎每个新手都犯过的错误。记住：**你的代码只能存在于 USER CODE BEGIN/END 标记之间**。
+如果你把代码写在 `USER CODE BEGIN 2` 和 `USER CODE END 2` 之外，下次用 CubeMX 修改配置并重新生成时，你的代码会被无情地抹掉。这是一个几乎每个新手都犯过的错误。**你的代码只能存在于 USER CODE BEGIN/END 标记之间。**
 :::
 
 ### Core/Src/stm32f1xx_it.c —— 中断服务函数
