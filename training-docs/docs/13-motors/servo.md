@@ -76,4 +76,4 @@ void servo_set_angle(TIM_HandleTypeDef *htim, uint32_t channel, uint8_t angle) {
 
 ## 小结
 
-舵机是最省心的"位置执行器"——三根线（信号、VCC、GND），一个 PWM，角度任你摆。电赛里做机械臂、转向机构、云台，舵机是第一选择。记住 50Hz PWM，0.5ms~2.5ms 脉宽对应 0°~180°，独立供电。
+舵机是最省心的"位置执行器"——三根线（信号、VCC、GND），一个 PWM，角度任你摆。电赛里做机械臂、转向机构、云台，舵机是第一选择。参数速记：50Hz PWM，0.5ms~2.5ms 脉宽对应 0°~180°，独立供电。

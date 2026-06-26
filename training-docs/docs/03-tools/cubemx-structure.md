@@ -165,6 +165,6 @@ void USART1_IRQHandler(void)
 
 ## 小结
 
-牢记核心规则：**Core/ 是你的地盘，但只在 USER CODE BEGIN/END 之间写字。Drivers/ 是禁区，任何情况都不要手动改。配置变了就打开 CubeMX 重新生成。**
+核心规则：**Core/ 是你的地盘，但只在 USER CODE BEGIN/END 之间写；Drivers/ 是禁区，别碰；配置变了就打开 CubeMX 重新生成。**
 
 这个分工保证了官网代码和你的个人代码边界清晰，互不干扰。
