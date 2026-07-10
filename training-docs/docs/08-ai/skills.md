@@ -57,15 +57,9 @@ pdf skill 会读取 PDF 内容，AI 再从中提取并总结相关信息。
 
 docx skill 会帮你排版成规范的 Word 文档。
 
-## 类比：近视眼镜
-
 ## 小结
 
-Skills 是 DeepSeek V4 Pro 的"感官系统"——纯文本模型本身看不到图、听不到声，通过 deepseek-vision 等 Skill 补上这些能力。知道哪些关键词触发哪个 Skill，AI 就能在合适的场景自动"戴上眼镜"或"拿起笔"。
-
-> **纯文本模型 + deepseek-vision = 近视的人戴上眼镜**
-
-模型本身没有"视觉皮层"，但通过 Skill 接入视觉模型后，它能够"看见"并描述图片内容。对你来说，使用体验就是——AI 突然能看图了。
+Skills 是 DeepSeek V4 Pro 的"感官系统"。纯文本模型本身看不到图、听不到声，通过 deepseek-vision 等 Skill 补上这些能力。知道哪些关键词触发哪个 Skill，AI 就能在合适的场景自动"戴上眼镜"或"拿起笔"。
 
 ::: warning
 Skills 虽然强大，但每个 Skill 都是独立的能力模块。别指望 AI 看完你的 PCB 照片就能帮你画原理图——它只能"看懂"，不能直接转换为电路设计动作，除非你再调用其他工具。
