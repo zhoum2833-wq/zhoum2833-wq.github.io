@@ -1,9 +1,11 @@
 """Split the single 电赛入门指南.md back into docs/ chapter files for VitePress."""
 import os, re, json
+from markdown_it import MarkdownIt
 
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 SRC  = os.path.join(ROOT, '电赛入门指南.md')
 DOCS = os.path.join(ROOT, 'docs')
+md = MarkdownIt()
 
 
 def main():
@@ -24,32 +26,119 @@ def main():
         print("ERROR: No @split markers found in source file")
         return
 
-    # The preamble before the first --- goes into index.md
+    # The preamble before the first --- is the homepage configuration
+    # Format:
+    #   # Title
+    #   > subtitle
+    #   (optional markdown content, e.g. 留言 section)
     raw_preamble = parts[0].strip()
-    sep_idx = raw_preamble.find('\n---\n')
-    preamble = raw_preamble[:sep_idx].strip() if sep_idx != -1 else raw_preamble.split('\n#')[0].strip()
+    # Strip trailing --- separator (may or may not have newlines around it)
+    preamble = re.sub(r'\n---\s*$', '', raw_preamble).strip()
+
+    # Parse preamble: extract H1, blockquote, and remaining content
+    title_match = re.search(r'^#\s+(.+)', preamble, re.MULTILINE)
+    title = title_match.group(1).strip() if title_match else '嵌入式与电赛入门与进阶'
+
+    subtitle_match = re.search(r'^>\s*(.+)', preamble, re.MULTILINE)
+    subtitle = subtitle_match.group(1).strip() if subtitle_match else '写给零基础队友的单片机入门教程'
+
+    # Content = everything after H1 and blockquote
+    # Remove H1 line and blockquote line(s) from preamble
+    content = preamble
+    if title_match:
+        content = content.replace(title_match.group(0), '', 1)
+    if subtitle_match:
+        content = content.replace(subtitle_match.group(0), '', 1)
+    content = content.strip()
+
     index_path = os.path.join(DOCS, 'index.md')
     os.makedirs(os.path.dirname(index_path), exist_ok=True)
 
-    # Build index.md with proper frontmatter
-    index_content = f"""---
-layout: home
+    # Build index.md — title/subtitle from source, content section, buttons at bottom
+    content_html = ''
+    if content:
+        content_rendered = md.render(content)
+        content_html = f'\n<div class="home-content">\n{content_rendered}\n</div>'
 
-hero:
-  name: "电赛入门指南"
-  text: "从零开始学嵌入式"
-  tagline: 写给零基础队友的单片机入门教程 · 2026 江苏省电子设计竞赛
-  actions:
-    - theme: brand
-      text: 开始学习
-      link: /01-hardware/cpu-arch
-    - theme: alt
-      text: 章节概览
-      link: /01-hardware/cpu-arch
+    index_content = f"""---
+layout: page
 
 ---
+<style>
+.home-container {{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: calc(100vh - 130px);
+  text-align: center;
+  padding: 2rem;
+}}
+.home-top {{
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}}
+.home-title {{
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}}
+.home-subtitle {{
+  color: var(--vp-c-text-2);
+  font-size: 1.1rem;
+  margin-bottom: 2rem;
+}}
+.home-content {{
+  text-align: left;
+  max-width: 600px;
+  width: 100%;
+  margin: 0 auto 2rem;
+}}
+.home-actions {{
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  justify-content: center;
+  padding-bottom: 2rem;
+}}
+.btn-brand {{
+  display: inline-block;
+  border-radius: 20px;
+  padding: 10px 24px;
+  font-size: 14px;
+  font-weight: 600;
+  background: var(--vp-c-brand-1);
+  color: #fff;
+  text-decoration: none;
+  transition: background 0.2s;
+}}
+.btn-brand:hover {{ background: var(--vp-c-brand-2); text-decoration: none; color: #fff; }}
+.btn-alt {{
+  display: inline-block;
+  border-radius: 20px;
+  padding: 10px 24px;
+  font-size: 14px;
+  font-weight: 600;
+  border: 1px solid var(--vp-c-brand-1);
+  color: var(--vp-c-brand-1);
+  text-decoration: none;
+  transition: all 0.2s;
+}}
+.btn-alt:hover {{ border-color: var(--vp-c-brand-2); color: var(--vp-c-brand-2); text-decoration: none; }}
+</style>
 
-{preamble}
+<div class="home-container">
+  <div class="home-top">
+    <h1 class="home-title">{title}</h1>
+    <p class="home-subtitle">{subtitle}</p>
+  </div>{content_html}
+  <div class="home-actions">
+    <a class="btn-brand" href="/01-hardware/cpu-arch">开始学习</a>
+    <a class="btn-alt" href="/01-hardware/cpu-arch">章节概览</a>
+  </div>
+</div>
 """
     with open(index_path, 'w', encoding='utf-8') as f:
         f.write(index_content)

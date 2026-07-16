@@ -84,5 +84,5 @@ echo   Deploy: https://zhoum2833-wq.github.io/training/
 echo ========================================
 echo.
 
-start "" "output"
+start "" "training-docs\output"
 pause
