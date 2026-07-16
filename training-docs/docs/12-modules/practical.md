@@ -517,3 +517,5 @@ void state_machine_loop(void) {
 
 ---
 # 第十三篇：电机与驱动
+
+<!-- @chapter: 第十三篇：电机与驱动 -->

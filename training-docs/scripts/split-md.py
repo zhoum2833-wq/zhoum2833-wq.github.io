@@ -64,22 +64,22 @@ def main():
     subtitle_match = re.search(r'^>\s*(.+)', preamble, re.MULTILINE)
     subtitle = subtitle_match.group(1).strip() if subtitle_match else ''
 
-    # Content = everything after H1 and blockquote
+    # Homepage body = everything after H1 and blockquote
     # Remove H1 line and blockquote line(s) from preamble
-    content = preamble
+    homepage_body = preamble
     if title_match:
-        content = content.replace(title_match.group(0), '', 1)
+        homepage_body = homepage_body.replace(title_match.group(0), '', 1)
     if subtitle_match:
-        content = content.replace(subtitle_match.group(0), '', 1)
-    content = content.strip()
+        homepage_body = homepage_body.replace(subtitle_match.group(0), '', 1)
+    homepage_body = homepage_body.strip()
 
     index_path = os.path.join(DOCS, 'index.md')
     os.makedirs(os.path.dirname(index_path), exist_ok=True)
 
     # Build index.md — title/subtitle from source, content section, buttons at bottom
     content_html = ''
-    if content:
-        content_rendered = md2html(content)
+    if homepage_body:
+        content_rendered = md2html(homepage_body)
         content_html = f'\n<div class="home-content">\n{content_rendered}\n</div>'
 
     subtitle_html = ''
@@ -165,6 +165,123 @@ sidebar: false
     with open(index_path, 'w', encoding='utf-8') as f:
         f.write(index_content)
     print(f"  index.md")
+
+    # ============================================================
+    # Parse @chapter markers for sidebar generation
+    # ============================================================
+    chapter_pattern = re.compile(r'<!-- @chapter: (.+?) -->')
+    split_marker_pattern = re.compile(r'<!-- @split: (.+?) -->')
+
+    ch_positions = [(m.start(), m.group(1)) for m in chapter_pattern.finditer(content)]
+    sp_positions = [(m.start(), m.group(1)) for m in split_marker_pattern.finditer(content)]
+
+    # Build path -> body map from parts
+    path_to_body = {}
+    for i in range(1, len(parts), 2):
+        path_to_body[parts[i]] = parts[i + 1]
+
+    # Group splits by chapter
+    sidebar_chapters = []
+    ch_idx = 0
+    current_ch_title = None
+    current_items = []
+
+    for sp_pos, sp_path in sp_positions:
+        # Advance chapter if this split is after the next chapter marker
+        while ch_idx < len(ch_positions) and sp_pos > ch_positions[ch_idx][0]:
+            if current_ch_title is not None:
+                sidebar_chapters.append((current_ch_title, current_items))
+            current_ch_title = ch_positions[ch_idx][1]
+            current_items = []
+            ch_idx += 1
+
+        if current_ch_title is None:
+            continue  # splits before first @chapter (shouldn't happen)
+
+        # Extract page title from body
+        body = path_to_body.get(sp_path, '')
+        heading = re.search(r'^#\s+(.+)', body, re.MULTILINE)
+        page_title = heading.group(1).strip() if heading else sp_path.replace('.md', '')
+
+        # Item link without .md extension
+        item_link = '/' + sp_path.replace('.md', '')
+        current_items.append((page_title, item_link))
+
+    if current_ch_title:
+        sidebar_chapters.append((current_ch_title, current_items))
+
+    # Generate config.mts with sidebar
+    sidebar_json_lines = []
+    for ch_title, items in sidebar_chapters:
+        item_lines = [f'          {{ text: \'{t}\', link: \'{l}\' }}' for t, l in items]
+        items_str = ',\n'.join(item_lines)
+        sidebar_json_lines.append(f'''      {{
+            text: \'{ch_title}\',
+            items: [
+        {items_str}
+            ]
+          }}''')
+
+    sidebar_str = ',\n'.join(sidebar_json_lines)
+
+    config_content = f'''import {{ defineConfig }} from 'vitepress'
+
+    export default defineConfig({{
+      title: '嵌入式与电赛入门与进阶',
+      description: '从零开始学习嵌入式开发，备战电子设计竞赛',
+      lang: 'zh-CN',
+      base: '/training/',
+
+      themeConfig: {{
+        nav: [
+          {{ text: '首页', link: '/' }},
+          {{ text: '开始学习', link: '/01-hardware/cpu-arch' }},
+        ],
+
+        sidebar: [
+    {sidebar_str}
+        ],
+
+        socialLinks: [
+          {{ icon: 'github', link: 'https://github.com' }}
+        ],
+
+        search: {{
+          provider: 'local'
+        }},
+
+        outline: {{
+          level: [2, 3],
+          label: '本页目录'
+        }},
+
+        docFooter: {{
+          prev: '上一篇',
+          next: '下一篇'
+        }},
+
+        lastUpdated: {{
+          text: '最后更新于'
+        }}
+      }},
+
+      markdown: {{
+        lineNumbers: true,
+        container: {{
+          tipLabel: '提示',
+          warningLabel: '注意',
+          dangerLabel: '警告',
+          infoLabel: '信息',
+          detailsLabel: '详情'
+        }}
+      }}
+    }})
+    '''
+
+    config_path = os.path.join(DOCS, '.vitepress', 'config.mts')
+    with open(config_path, 'w', encoding='utf-8') as f:
+        f.write(config_content)
+    print(f"  config.mts ({len(sidebar_chapters)} chapters)")
 
     # Extract articles
     count = 0

@@ -139,3 +139,5 @@ prev = smooth;
 ---
 
 # 第八篇：AI 编程
+
+<!-- @chapter: 第八篇：AI 编程 -->
