@@ -157,8 +157,8 @@ sidebar: false
     <h1 class="home-title">{title}</h1>{subtitle_html}
   </div>{content_html}
   <div class="home-actions">
-    <a class="btn-brand" href="/01-hardware/cpu-arch">开始学习</a>
-    <a class="btn-alt" href="/01-hardware/cpu-arch">章节概览</a>
+    <a class="btn-brand" href="/training/01-hardware/cpu-arch.html">开始学习</a>
+    <a class="btn-alt" href="/training/01-hardware/cpu-arch.html">章节概览</a>
   </div>
 </div>
 """

@@ -72,7 +72,7 @@ sidebar: false
 <p>记录一下自己的学习心得与理解</p>
 </div>
   <div class="home-actions">
-    <a class="btn-brand" href="/01-hardware/cpu-arch">开始学习</a>
-    <a class="btn-alt" href="/01-hardware/cpu-arch">章节概览</a>
+    <a class="btn-brand" href="/training/01-hardware/cpu-arch.html">开始学习</a>
+    <a class="btn-alt" href="/training/01-hardware/cpu-arch.html">章节概览</a>
   </div>
 </div>

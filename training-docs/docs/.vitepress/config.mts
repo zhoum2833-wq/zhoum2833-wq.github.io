@@ -1,7 +1,7 @@
 import { defineConfig } from 'vitepress'
 
 export default defineConfig({
-  title: '电赛入门指南',
+  title: '嵌入式与电赛入门与进阶',
   description: '从零开始学习嵌入式开发，备战电子设计竞赛',
   lang: 'zh-CN',
   base: '/training/',
