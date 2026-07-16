@@ -70,11 +70,10 @@ layout: page
 <div class="home-container">
   <div class="home-top">
     <h1 class="home-title">嵌入式与电赛入门与进阶</h1>
-    <p class="home-subtitle">写给零基础队友的单片机入门教程 · 2026 江苏省电子设计竞赛</p>
+    <p class="home-subtitle">写给零基础队友的单片机入门教程</p>
   </div>
 <div class="home-content">
-<p>持续更新中，有问题直接找我。</p>
-
+<p>记录一下自己的学习心得与理解</p>
 </div>
   <div class="home-actions">
     <a class="btn-brand" href="/01-hardware/cpu-arch">开始学习</a>

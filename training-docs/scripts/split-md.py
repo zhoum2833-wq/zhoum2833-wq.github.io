@@ -1,11 +1,33 @@
 """Split the single 电赛入门指南.md back into docs/ chapter files for VitePress."""
 import os, re, json
-from markdown_it import MarkdownIt
 
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 SRC  = os.path.join(ROOT, '电赛入门指南.md')
 DOCS = os.path.join(ROOT, 'docs')
-md = MarkdownIt()
+
+
+def md2html(text):
+    """Minimal markdown to HTML — handles headings and paragraphs only."""
+    lines = text.strip().split('\n')
+    result = []
+    buf = []
+    for line in lines:
+        m = re.match(r'^(#{1,6})\s+(.+)', line)
+        if m:
+            if buf:
+                result.append('<p>' + '<br>'.join(buf) + '</p>')
+                buf = []
+            level = len(m.group(1))
+            result.append(f'<h{level}>{m.group(2)}</h{level}>')
+        elif line.strip() == '':
+            if buf:
+                result.append('<p>' + '<br>'.join(buf) + '</p>')
+                buf = []
+        else:
+            buf.append(line)
+    if buf:
+        result.append('<p>' + '<br>'.join(buf) + '</p>')
+    return '\n'.join(result)
 
 
 def main():
@@ -57,7 +79,7 @@ def main():
     # Build index.md — title/subtitle from source, content section, buttons at bottom
     content_html = ''
     if content:
-        content_rendered = md.render(content)
+        content_rendered = md2html(content)
         content_html = f'\n<div class="home-content">\n{content_rendered}\n</div>'
 
     index_content = f"""---
