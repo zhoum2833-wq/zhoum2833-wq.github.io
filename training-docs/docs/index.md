@@ -69,7 +69,7 @@ sidebar: false
     <h1 class="home-title">嵌入式与电赛入门与进阶</h1>
   </div>
 <div class="home-content">
-<p>记录一下自己的学习心得与理解</p>
+<p>记录一下自己的学习心得与理解<br>憧憬成为省一选手与硬件佬</p>
 <p><!-- @chapter: 第一篇：初识单片机 --></p>
 </div>
   <div class="home-actions">

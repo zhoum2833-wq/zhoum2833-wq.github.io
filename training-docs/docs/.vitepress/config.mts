@@ -19,10 +19,9 @@ import { defineConfig } from 'vitepress'
                   { text: '什么是单片机', link: '/01-hardware/whatisdpj' },
           { text: '单片机是怎么运行的', link: '/01-hardware/how_dpj_work' },
           { text: 'RAM 与 ROM（Flash）', link: '/01-hardware/ram-rom' },
-          { text: 'ADC 与 DAC', link: '/01-hardware/adc-dac' },
           { text: '定时器与 PWM', link: '/01-hardware/timer-pwm' },
-          { text: '常用传感器选型概览', link: '/01-hardware/sensors-overview' },
           { text: 'GPIO 与片内外设', link: '/01-hardware/gpio' },
+          { text: 'ADC 与 DAC', link: '/01-hardware/adc-dac' },
           { text: '引脚电气数据', link: '/01-hardware/electrical' },
           { text: '最小系统', link: '/01-hardware/minimum-board' }
             ]
@@ -30,19 +29,19 @@ import { defineConfig } from 'vitepress'
       {
             text: '第二篇：电脑如何连接单片机',
             items: [
-                  { text: 'USB 转串口芯片', link: '/02-connection/usb-uart' },
-          { text: '为什么虚拟出 COM 口', link: '/02-connection/virtual-com' },
-          { text: 'USB 到底供了多少电', link: '/02-connection/power' },
-          { text: '调试器（DAP-Link / ST-Link / J-Link）', link: '/02-connection/debugger' }
+                  { text: 'USB 转串口芯片(有线)', link: '/02-connection/usb-uart' },
+          { text: '无线串口调试器', link: '/02-connection/no_xian_uart' },
+          { text: '什么是调试器', link: '/02-connection/debugger' }
             ]
           },
       {
-            text: '第三篇：开发工具与工程结构',
+            text: '第三篇：开发软件与工程结构',
             items: [
                   { text: '开发工具全景', link: '/03-tools/overview' },
-          { text: 'STM32CubeMX 是什么', link: '/03-tools/cubemx' },
-          { text: 'CubeMX 生成的工程结构拆解', link: '/03-tools/cubemx-structure' },
-          { text: '自定义工程模板结构', link: '/03-tools/custom-template' }
+          { text: 'Keil5：编译、烧录与调试', link: '/03-tools/keil' },
+          { text: '自定义工程模板 — 以 4WD_Car 为例', link: '/03-tools/custom-template' },
+          { text: 'AI 辅助嵌入式开发', link: '/03-tools/ai-tools' },
+          { text: '串口监视与辅助工具', link: '/03-tools/serial-tools' }
             ]
           },
       {
