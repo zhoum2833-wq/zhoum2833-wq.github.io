@@ -84,6 +84,7 @@ def main():
 
     index_content = f"""---
 layout: page
+sidebar: false
 
 ---
 <style>
@@ -91,16 +92,14 @@ layout: page
   display: flex;
   flex-direction: column;
   align-items: center;
-  min-height: calc(100vh - 130px);
   text-align: center;
-  padding: 2rem;
+  padding: 4rem 2rem 2rem;
 }}
 .home-top {{
-  flex: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  margin-bottom: 1.5rem;
 }}
 .home-title {{
   font-size: 2.5rem;
@@ -110,13 +109,13 @@ layout: page
 .home-subtitle {{
   color: var(--vp-c-text-2);
   font-size: 1.1rem;
-  margin-bottom: 2rem;
+  margin-bottom: 0;
 }}
 .home-content {{
   text-align: center;
   color: var(--vp-c-text-2);
   max-width: 600px;
-  margin: 0 auto 1rem;
+  margin: 0 auto 1.5rem;
 }}
 .home-content p {{
   margin: 0.5rem 0;
@@ -126,7 +125,6 @@ layout: page
   gap: 1rem;
   flex-wrap: wrap;
   justify-content: center;
-  padding-bottom: 2rem;
 }}
 .btn-brand {{
   display: inline-block;
