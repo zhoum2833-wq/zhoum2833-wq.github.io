@@ -29,10 +29,13 @@ layout: page
   margin-bottom: 2rem;
 }
 .home-content {
-  text-align: left;
+  text-align: center;
+  color: var(--vp-c-text-2);
   max-width: 600px;
-  width: 100%;
-  margin: 0 auto 2rem;
+  margin: 0 auto 1rem;
+}
+.home-content p {
+  margin: 0.5rem 0;
 }
 .home-actions {
   display: flex;
