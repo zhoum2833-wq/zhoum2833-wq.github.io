@@ -9,7 +9,7 @@ import { defineConfig } from 'vitepress'
       themeConfig: {
         nav: [
           { text: '首页', link: '/' },
-          { text: '开始学习', link: '/01-hardware/cpu-arch' },
+          { text: '开始学习', link: '/01-hardware/whatisdpj' },
         ],
 
         sidebar: [

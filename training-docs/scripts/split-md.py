@@ -76,6 +76,11 @@ def main():
     index_path = os.path.join(DOCS, 'index.md')
     os.makedirs(os.path.dirname(index_path), exist_ok=True)
 
+    # Determine first article path for homepage buttons (before generating index.md)
+    raw_first_sp = parts[1].strip() if len(parts) > 1 else '01-hardware/cpu-arch.md'
+    first_link = '/' + raw_first_sp.replace('.md', '')         # for config.mts: /01-hardware/whatisdpj
+    first_href = '/training/' + raw_first_sp.replace('.md', '.html')  # for buttons
+
     # Build index.md — title/subtitle from source, content section, buttons at bottom
     content_html = ''
     if homepage_body:
@@ -157,8 +162,8 @@ sidebar: false
     <h1 class="home-title">{title}</h1>{subtitle_html}
   </div>{content_html}
   <div class="home-actions">
-    <a class="btn-brand" href="/training/01-hardware/cpu-arch.html">开始学习</a>
-    <a class="btn-alt" href="/training/01-hardware/cpu-arch.html">章节概览</a>
+    <a class="btn-brand" href="{first_href}">开始学习</a>
+    <a class="btn-alt" href="{first_href}">章节概览</a>
   </div>
 </div>
 """
@@ -235,7 +240,7 @@ sidebar: false
       themeConfig: {{
         nav: [
           {{ text: '首页', link: '/' }},
-          {{ text: '开始学习', link: '/01-hardware/cpu-arch' }},
+          {{ text: '开始学习', link: '{first_link}' }},
         ],
 
         sidebar: [

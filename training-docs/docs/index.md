@@ -70,10 +70,10 @@ sidebar: false
   </div>
 <div class="home-content">
 <p>记录一下自己的学习心得与理解</p>
-<p>---<br><!-- @chapter: 第一篇：初识单片机 --></p>
+<p><!-- @chapter: 第一篇：初识单片机 --></p>
 </div>
   <div class="home-actions">
-    <a class="btn-brand" href="/training/01-hardware/cpu-arch.html">开始学习</a>
-    <a class="btn-alt" href="/training/01-hardware/cpu-arch.html">章节概览</a>
+    <a class="btn-brand" href="/training/01-hardware/whatisdpj.html">开始学习</a>
+    <a class="btn-alt" href="/training/01-hardware/whatisdpj.html">章节概览</a>
   </div>
 </div>
