@@ -14,9 +14,10 @@ import { defineConfig } from 'vitepress'
 
         sidebar: [
           {
-            text: '第一篇：硬件基础',
+            text: '第一篇：初识单片机',
             items: [
-                  { text: '单片机的介绍', link: '/01-hardware/cpu-arch' },
+                  { text: '什么是单片机', link: '/01-hardware/whatisdpj' },
+          { text: '单片机是怎么运行的', link: '/01-hardware/how_dpj_work' },
           { text: 'RAM 与 ROM（Flash）', link: '/01-hardware/ram-rom' },
           { text: 'ADC 与 DAC', link: '/01-hardware/adc-dac' },
           { text: '定时器与 PWM', link: '/01-hardware/timer-pwm' },
