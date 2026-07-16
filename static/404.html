@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <title>页面未找到 | zhoum2833</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      display: flex; justify-content: center; align-items: center;
+      min-height: 100vh; margin: 0; background: #f5f5f5; color: #333;
+    }
+    .container { text-align: center; padding: 2rem; }
+    h1 { font-size: 4rem; margin: 0; color: #aaa; }
+    p { margin: 1rem 0; line-height: 1.6; }
+    a { color: #0077cc; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+  </style>
+  <script>
+    (function() {
+      var path = window.location.pathname;
+      // /training/* 下的干净 URL（无 .html 后缀）→ 补上 .html 让 GitHub Pages 命中物理文件
+      // VitePress 构建产物为 page.html，但客户端路由使用干净 URL
+      // 用户复制地址栏链接分享时，接收方直接访问干净 URL → 404 → 这里修正
+      if (path.indexOf('/training/') === 0
+          && path !== '/training/'
+          && path.indexOf('.html') === -1) {
+        window.location.replace(path + '.html');
+        return;
+      }
+    })();
+  </script>
+</head>
+<body>
+  <div class="container">
+    <h1>404</h1>
+    <p>抱歉，找不到该页面。</p>
+    <p><a href="/">← 返回首页</a></p>
+  </div>
+</body>
+</html>
