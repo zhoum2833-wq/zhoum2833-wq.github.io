@@ -62,7 +62,7 @@ def main():
     title = title_match.group(1).strip() if title_match else '嵌入式与电赛入门与进阶'
 
     subtitle_match = re.search(r'^>\s*(.+)', preamble, re.MULTILINE)
-    subtitle = subtitle_match.group(1).strip() if subtitle_match else '写给零基础队友的单片机入门教程'
+    subtitle = subtitle_match.group(1).strip() if subtitle_match else ''
 
     # Content = everything after H1 and blockquote
     # Remove H1 line and blockquote line(s) from preamble
@@ -82,6 +82,10 @@ def main():
         content_rendered = md2html(content)
         content_html = f'\n<div class="home-content">\n{content_rendered}\n</div>'
 
+    subtitle_html = ''
+    if subtitle:
+        subtitle_html = f'\n    <p class="home-subtitle">{subtitle}</p>'
+
     index_content = f"""---
 layout: page
 sidebar: false
@@ -93,29 +97,24 @@ sidebar: false
   flex-direction: column;
   align-items: center;
   text-align: center;
-  padding: 4rem 2rem 2rem;
+  padding: 6rem 2rem 3rem;
 }}
 .home-top {{
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-bottom: 1.5rem;
+  margin-bottom: 2rem;
 }}
 .home-title {{
   font-size: 2.5rem;
   font-weight: 700;
-  margin-bottom: 0.5rem;
-}}
-.home-subtitle {{
-  color: var(--vp-c-text-2);
-  font-size: 1.1rem;
   margin-bottom: 0;
 }}
 .home-content {{
   text-align: center;
   color: var(--vp-c-text-2);
   max-width: 600px;
-  margin: 0 auto 1.5rem;
+  margin: 0 auto 2rem;
 }}
 .home-content p {{
   margin: 0.5rem 0;
@@ -125,6 +124,7 @@ sidebar: false
   gap: 1rem;
   flex-wrap: wrap;
   justify-content: center;
+  margin-top: 0.5rem;
 }}
 .btn-brand {{
   display: inline-block;
@@ -154,8 +154,7 @@ sidebar: false
 
 <div class="home-container">
   <div class="home-top">
-    <h1 class="home-title">{title}</h1>
-    <p class="home-subtitle">{subtitle}</p>
+    <h1 class="home-title">{title}</h1>{subtitle_html}
   </div>{content_html}
   <div class="home-actions">
     <a class="btn-brand" href="/01-hardware/cpu-arch">开始学习</a>
