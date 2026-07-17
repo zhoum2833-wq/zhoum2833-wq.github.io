@@ -59,6 +59,13 @@ import { defineConfig } from 'vitepress'
             ]
           },
       {
+            text: '第六篇：机械结构',
+            items: [
+                  { text: 'SolidWorks vs Blender', link: '/10-mechanical/sw-blender' },
+          { text: '亚克力板', link: '/10-mechanical/acrylic' }
+            ]
+          },
+      {
             text: '第七篇：PCB 设计',
             items: [
                   { text: 'PCB 设计全流程概览', link: '/09-pcb/overview' },
@@ -72,14 +79,7 @@ import { defineConfig } from 'vitepress'
             ]
           },
       {
-            text: '第八篇：机械结构',
-            items: [
-                  { text: 'SolidWorks vs Blender', link: '/10-mechanical/sw-blender' },
-          { text: '亚克力板', link: '/10-mechanical/acrylic' }
-            ]
-          },
-      {
-            text: '第九篇：项目方案设计',
+            text: '第八篇：项目方案设计',
             items: [
                   { text: '车体方案选择', link: '/11-project-design/chassis' },
           { text: '电机扭矩估算', link: '/11-project-design/torque' },
@@ -89,7 +89,7 @@ import { defineConfig } from 'vitepress'
             ]
           },
       {
-            text: '第十篇：常见模块与实战',
+            text: '第九篇：常见模块与实战',
             items: [
                   { text: 'TB6612FNG — 两路电机驱动', link: '/12-modules/tb6612' },
           { text: '编码器 — 测速与里程', link: '/12-modules/encoder' },
@@ -101,7 +101,7 @@ import { defineConfig } from 'vitepress'
             ]
           },
       {
-            text: '第十一篇：电机与驱动',
+            text: '第十篇：电机与驱动',
             items: [
                   { text: '直流有刷电机 vs 无刷电机', link: '/13-motors/dc-motor' },
           { text: '步进电机原理与驱动', link: '/13-motors/stepper' },
@@ -110,7 +110,7 @@ import { defineConfig } from 'vitepress'
             ]
           },
       {
-            text: '第十二篇：显示与交互',
+            text: '第十一篇：显示与交互',
             items: [
                   { text: 'OLED 屏（I2C/SPI）', link: '/14-display/oled' },
           { text: 'TFT 屏', link: '/14-display/tft' },
@@ -118,7 +118,7 @@ import { defineConfig } from 'vitepress'
             ]
           },
       {
-            text: '第十三篇：电源管理',
+            text: '第十二篇：电源管理',
             items: [
                   { text: '电池选型', link: '/15-power/battery' },
           { text: '电压转换方案', link: '/15-power/conversion' },

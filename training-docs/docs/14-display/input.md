@@ -102,5 +102,5 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
 
 ---
 
-# 第十三篇：电源管理
-<!-- @chapter: 第十三篇：电源管理 -->
+# 第十二篇：电源管理
+<!-- @chapter: 第十二篇：电源管理 -->
