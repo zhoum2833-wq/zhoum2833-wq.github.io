@@ -59,19 +59,6 @@ import { defineConfig } from 'vitepress'
             ]
           },
       {
-            text: '第六篇：AI 编程',
-            items: [
-                  { text: 'VS Code 下载与安装', link: '/08-ai/vscode-install' },
-          { text: 'VS Code — 你的 AI 编程环境', link: '/08-ai/vscode' },
-          { text: 'Claude Code 插件 + DeepSeek V4 环境配置', link: '/08-ai/claude-code-setup' },
-          { text: 'Claude Code + DeepSeek V4 Pro', link: '/08-ai/claude-code' },
-          { text: 'AI 基础知识', link: '/08-ai/ai-basics' },
-          { text: '怎么和 AI 正确聊天', link: '/08-ai/prompting' },
-          { text: 'Skills 与多模态', link: '/08-ai/skills' },
-          { text: 'Git 团队协作', link: '/08-ai/git' }
-            ]
-          },
-      {
             text: '第七篇：PCB 设计',
             items: [
                   { text: 'PCB 设计全流程概览', link: '/09-pcb/overview' },
