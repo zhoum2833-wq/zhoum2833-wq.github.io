@@ -59,10 +59,15 @@ import { defineConfig } from 'vitepress'
             ]
           },
       {
-            text: '第六篇：机械结构',
+            text: '第六篇：常见模块与实战',
             items: [
-                  { text: 'SolidWorks vs Blender', link: '/10-mechanical/sw-blender' },
-          { text: '亚克力板', link: '/10-mechanical/acrylic' }
+                  { text: 'TB6612FNG — 两路电机驱动', link: '/12-modules/tb6612' },
+          { text: '编码器 — 测速与里程', link: '/12-modules/encoder' },
+          { text: '8 路灰度传感器', link: '/12-modules/grayscale' },
+          { text: 'JY61P 陀螺仪', link: '/12-modules/jy61p' },
+          { text: 'MaixCAM Pro — 视觉模块', link: '/12-modules/maxicam' },
+          { text: '无线串口调试与无线烧录', link: '/12-modules/wireless' },
+          { text: '实战路线图：从点灯到巡线小车', link: '/12-modules/practical' }
             ]
           },
       {
@@ -89,15 +94,10 @@ import { defineConfig } from 'vitepress'
             ]
           },
       {
-            text: '第九篇：常见模块与实战',
+            text: '第九篇：机械结构',
             items: [
-                  { text: 'TB6612FNG — 两路电机驱动', link: '/12-modules/tb6612' },
-          { text: '编码器 — 测速与里程', link: '/12-modules/encoder' },
-          { text: '8 路灰度传感器', link: '/12-modules/grayscale' },
-          { text: 'JY61P 陀螺仪', link: '/12-modules/jy61p' },
-          { text: 'MaixCAM Pro — 视觉模块', link: '/12-modules/maxicam' },
-          { text: '无线串口调试与无线烧录', link: '/12-modules/wireless' },
-          { text: '实战路线图：从点灯到巡线小车', link: '/12-modules/practical' }
+                  { text: 'SolidWorks vs Blender', link: '/10-mechanical/sw-blender' },
+          { text: '亚克力板', link: '/10-mechanical/acrylic' }
             ]
           },
       {
