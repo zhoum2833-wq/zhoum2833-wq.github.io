@@ -21,10 +21,6 @@ title: UART —— 最基础的串口通信
  GND ─────────────────── GND
 ```
 
-::: tip 记不住的记忆法
-TX（发送）的 T 像一个人伸手指向外面 → 数据从设备流出去。RX（接收）的 R 像一个人张开手接收东西 → 数据流进设备。连接的时候就是"你的输出给对方的输入"——交叉连接。
-:::
-
 ## "异步"是什么意思？
 
 通信分为两大类：**同步**和**异步**。
@@ -55,13 +51,9 @@ UART 是异步的——没有时钟线，双方靠**事先约定好的波特率*
 4. **校验位（Parity Bit，可选）**：如果开启了校验，数据位之后会多一个校验位，用来检测传输中是否出现了错误。8-N-1 的 "N" 就是 No parity，不校验。
 5. **停止位（Stop Bit(s)）**：数据发送完毕，发送方把线路拉回高电平并保持 1 到 2 个比特周期。这是一个字节传输结束的标志。
 
-::: tip 形象类比：旗语通信
-想象两个人在山头之间用旗语通信。没有旗子举起时（线路空闲）= 高电平。一方突然举起旗子（起始位）= 信号来了。然后按照约定好的节奏，用旗子的左右位置表示 0 和 1，连续 8 下（数据位）。最后放回旗子（停止位）= 这个字说完了。两人必须用相同的挥旗节奏（波特率），否则接收方会把"左右左"看成"左左右"。
-:::
-
 ## 常见配置：8-N-1
 
-99% 的场景下，你使用的都是 **8-N-1** 配置：
+99% 的场景下，使用的都是 **8-N-1** 配置：
 
 | 参数 | 值 | 含义 |
 |------|-----|------|
@@ -69,63 +61,7 @@ UART 是异步的——没有时钟线，双方靠**事先约定好的波特率*
 | 校验位 | None (N) | 不做奇偶校验 |
 | 停止位 | 1 | 1 个停止位 |
 
-在 STM32 HAL 库中的对应配置代码（CubeMX 生成）：
-
-```c
-huart1.Instance = USART1;
-huart1.Init.BaudRate = 115200;
-huart1.Init.WordLength = UART_WORDLENGTH_8B;   // 8 个数据位
-huart1.Init.StopBits = UART_STOPBITS_1;        // 1 个停止位
-huart1.Init.Parity = UART_PARITY_NONE;         // 无校验
-huart1.Init.Mode = UART_MODE_TX_RX;            // 收发都要
-huart1.Init.OverSampling = UART_OVERSAMPLING_16;
-if (HAL_UART_Init(&huart1) != HAL_OK)
-{
-    Error_Handler();
-}
-```
-
-## UART 在实际项目中的应用
-
-UART 是嵌入式开发中最常用的通信方式。你在比赛中几乎一定会在以下场景用到它：
-
-- **printf() 调试输出**：在代码关键位置打印变量值、状态信息，帮助定位 bug。这是最常用的调试手段。
-- **JY61P 陀螺仪**：这个姿态传感器通过 UART 发送角度数据给单片机。
-- **Vofa+ 遥测**：单片机把传感器数据通过 UART 发给电脑上的 Vofa+ 软件，实时显示波形。
-- **GPS 模块**：几乎所有 GPS 模块都通过 UART 输出 NMEA 格式的定位数据。
-- **蓝牙模块（HC-05/HC-06）**：UART 连接蓝牙模块，实现无线串口透传。
-
-## 一个简单的 UART 使用示例
-
-在 STM32 上用 HAL 库通过 UART 打印 "Hello World"：
-
-```c
-#include "main.h"
-#include <string.h>   // 为了 strlen()
-
-// 假设 CubeMX 已经配置好了 USART1，生成的句柄叫 huart1
-
-int main(void)
-{
-    HAL_Init();
-    SystemClock_Config();
-    MX_GPIO_Init();
-    MX_USART1_UART_Init();
-
-    char msg[] = "Hello World! MCU is alive.\r\n";
-
-    while (1)
-    {
-        // 发送字符串
-        HAL_UART_Transmit(&huart1, (uint8_t*)msg, strlen(msg), 100);
-        // 参数：句柄, 数据指针, 数据长度, 超时时间(ms)
-
-        HAL_Delay(1000);  // 每隔 1 秒发一次
-    }
-}
-```
-
-如果你需要在串口助手上看到整齐的换行，注意发送 `\r\n`（回车+换行），不要只有 `\n`。Windows 的串口助手的换行通常是 `\r\n`。
+**UART 是嵌入式开发中最常用的通信方式**
 
 ## 接收数据的两种方式
 
@@ -134,30 +70,3 @@ UART 接收数据有三种常见方式：
 1. **阻塞接收（Blocking）**：调用 `HAL_UART_Receive()`，CPU 一直等着，直到收到指定数量的数据才继续往下执行。适合简单应用，但等数据期间 CPU 什么别的也干不了。
 2. **中断接收（Interrupt）**：调用 `HAL_UART_Receive_IT()`，开启中断。数据到达时硬件触发中断，CPU 来处理。**最常用的方式。**
 3. **DMA 接收（Direct Memory Access）**：数据自动存到内存，完全不占用 CPU。适合高速、大批量的数据接收。
-
-```c
-// 中断接收示例
-uint8_t rx_buffer[1];  // 接收缓冲区
-
-// 启动一次中断接收
-HAL_UART_Receive_IT(&huart1, rx_buffer, 1);
-
-// 接收完成后 HAL 会自动调用这个回调函数
-void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
-{
-    if (huart->Instance == USART1)
-    {
-        // 处理收到的字节 rx_buffer[0]
-        // 然后再次启动接收，形成一个持续接收的循环
-        HAL_UART_Receive_IT(&huart1, rx_buffer, 1);
-    }
-}
-```
-
-::: warning 中断接收每次只收 1 个字节
-上面这个代码里每次只接收 1 个字节，处理完再启动下一次接收。这是因为 UART 数据是随机到达的，你不知道什么时候会来数据。收 1 个字节→处理→再收 1 个，是最灵活的方式。想一次收多个字节可以用空闲中断（IDLE interrupt）来判定一帧数据收完了。
-:::
-
-## 小结
-
-UART 是最简单的串口通信：两根线、交叉连接、约定好波特率、不需要时钟线。调试输出、连传感器、接无线模块——全都是 UART。两根线，搞定了嵌入式世界里 80% 的"说话"需求。

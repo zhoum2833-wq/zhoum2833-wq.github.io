@@ -37,11 +37,8 @@ import { defineConfig } from 'vitepress'
       {
             text: '第三篇：开发软件与工程结构',
             items: [
-                  { text: '开发工具全景', link: '/03-tools/overview' },
-          { text: 'Keil5：编译、烧录与调试', link: '/03-tools/keil' },
-          { text: '自定义工程模板 — 以 4WD_Car 为例', link: '/03-tools/custom-template' },
-          { text: 'AI 辅助嵌入式开发', link: '/03-tools/ai-tools' },
-          { text: '串口监视与辅助工具', link: '/03-tools/serial-tools' }
+                  { text: '软件开发选择', link: '/03-tools/project' },
+          { text: 'AI 辅助嵌入式开发', link: '/03-tools/ai-tools' }
             ]
           },
       {
@@ -50,42 +47,19 @@ import { defineConfig } from 'vitepress'
                   { text: 'UART —— 最基础的串口通信', link: '/04-protocols/uart' },
           { text: 'I2C —— 两线制主从通信', link: '/04-protocols/i2c' },
           { text: 'SPI —— 高速全双工通信', link: '/04-protocols/spi' },
-          { text: 'UART vs I2C vs SPI —— 三种协议对比', link: '/04-protocols/comparison' },
-          { text: 'CAN 总线', link: '/04-protocols/can' }
+          { text: 'UART vs I2C vs SPI —— 三种协议对比', link: '/04-protocols/comparison' }
             ]
           },
       {
-            text: '第五篇：单片机内部机制',
-            items: [
-                  { text: '单片机是如何运作的', link: '/05-internals/how-mcu-runs' },
-          { text: '数据是如何流动的', link: '/05-internals/data-flow' },
-          { text: '中断 — 别让 CPU 傻等', link: '/05-internals/interrupts' },
-          { text: 'DMA — 让数据自己搬家', link: '/05-internals/dma' }
-            ]
-          },
-      {
-            text: '第六篇：RTOS 与 Linux',
+            text: '第五篇：RTOS 与 Linux',
             items: [
                   { text: '为什么需要操作系统', link: '/06-rtos-linux/why-os' },
           { text: 'FreeRTOS — 单片机上最流行的实时操作系统', link: '/06-rtos-linux/freertos' },
-          { text: 'RT-Thread — 国产实时操作系统', link: '/06-rtos-linux/rtthread' },
-          { text: 'Linux — 当单片机不够用了', link: '/06-rtos-linux/linux' }
+          { text: 'Linux', link: '/06-rtos-linux/linux' }
             ]
           },
       {
-            text: '第七篇：编程实践',
-            items: [
-                  { text: '模块化 — 一个外设一个模块', link: '/07-programming/modular' },
-          { text: '分层 — BSP 层 vs App 层', link: '/07-programming/layering' },
-          { text: '调试三件套', link: '/07-programming/debugging' },
-          { text: '编译链 — 从 .c 到 .hex', link: '/07-programming/toolchain' },
-          { text: 'PID 控制入门', link: '/07-programming/pid' },
-          { text: '状态机设计', link: '/07-programming/state-machine' },
-          { text: '滤波器入门', link: '/07-programming/filters' }
-            ]
-          },
-      {
-            text: '第八篇：AI 编程',
+            text: '第六篇：AI 编程',
             items: [
                   { text: 'VS Code 下载与安装', link: '/08-ai/vscode-install' },
           { text: 'VS Code — 你的 AI 编程环境', link: '/08-ai/vscode' },
@@ -98,7 +72,7 @@ import { defineConfig } from 'vitepress'
             ]
           },
       {
-            text: '第九篇：PCB 设计',
+            text: '第七篇：PCB 设计',
             items: [
                   { text: 'PCB 设计全流程概览', link: '/09-pcb/overview' },
           { text: '电源设计 — LDO 与 DC-DC', link: '/09-pcb/power' },
@@ -111,14 +85,14 @@ import { defineConfig } from 'vitepress'
             ]
           },
       {
-            text: '第十篇：机械结构',
+            text: '第八篇：机械结构',
             items: [
                   { text: 'SolidWorks vs Blender', link: '/10-mechanical/sw-blender' },
           { text: '亚克力板', link: '/10-mechanical/acrylic' }
             ]
           },
       {
-            text: '第十一篇：项目方案设计',
+            text: '第九篇：项目方案设计',
             items: [
                   { text: '车体方案选择', link: '/11-project-design/chassis' },
           { text: '电机扭矩估算', link: '/11-project-design/torque' },
@@ -128,7 +102,7 @@ import { defineConfig } from 'vitepress'
             ]
           },
       {
-            text: '第十二篇：常见模块与实战',
+            text: '第十篇：常见模块与实战',
             items: [
                   { text: 'TB6612FNG — 两路电机驱动', link: '/12-modules/tb6612' },
           { text: '编码器 — 测速与里程', link: '/12-modules/encoder' },
@@ -140,7 +114,7 @@ import { defineConfig } from 'vitepress'
             ]
           },
       {
-            text: '第十三篇：电机与驱动',
+            text: '第十一篇：电机与驱动',
             items: [
                   { text: '直流有刷电机 vs 无刷电机', link: '/13-motors/dc-motor' },
           { text: '步进电机原理与驱动', link: '/13-motors/stepper' },
@@ -149,7 +123,7 @@ import { defineConfig } from 'vitepress'
             ]
           },
       {
-            text: '第十四篇：显示与交互',
+            text: '第十二篇：显示与交互',
             items: [
                   { text: 'OLED 屏（I2C/SPI）', link: '/14-display/oled' },
           { text: 'TFT 屏', link: '/14-display/tft' },
@@ -157,7 +131,7 @@ import { defineConfig } from 'vitepress'
             ]
           },
       {
-            text: '第十五篇：电源管理',
+            text: '第十三篇：电源管理',
             items: [
                   { text: '电池选型', link: '/15-power/battery' },
           { text: '电压转换方案', link: '/15-power/conversion' },
