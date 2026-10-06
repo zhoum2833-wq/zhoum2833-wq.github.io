@@ -176,6 +176,10 @@ async function gh(path, opts = {}) {
   if (!res.ok) {
     let detail = "";
     try { detail = (await res.json()).message || ""; } catch (e) {}
+    if (res.status === 403 && /not accessible|resource/i.test(detail))
+      throw new Error("Token 没有写权限。请到 GitHub → Settings → Developer settings → Fine-grained tokens，编辑该 token：仓库访问包含本仓库，权限 Contents 设为 Read and write，然后在本页点「断开连接」重新登录。");
+    if (res.status === 401)
+      throw new Error("Token 无效或已过期，请重新生成并在本页重新连接。");
     throw new Error("GitHub API " + res.status + " " + detail);
   }
   return res.json();
