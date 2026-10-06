@@ -28,7 +28,7 @@ draft: false
 ## 联系方式
 
 - GitHub: [@zhoum2833](https://github.com/zhoum2833)
-- Email: zhoum2833@163.com
+- Email: [zhoum2833@gmail.com](mailto:zhoum2833@gmail.com)
 
 ---
 
