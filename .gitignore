@@ -3,12 +3,12 @@
 /resources/
 .hugo_build.lock
 
-# Training docs (VitePress) — 构建产物，CI 自动生成
-/training-docs/node_modules/
-/training-docs/docs/.vitepress/dist/
-/training-docs/docs/.vitepress/cache/
+# Training docs — 仅本地保留，不公开、不部署（原 VitePress 构建产物规则已并入）
+/training-docs/
 /static/training/
 /static/电赛入门指南.docx
+/static/电赛入门指南.pdf
+/.npm-cache-tmp/
 
 # OS
 .DS_Store
@@ -20,3 +20,6 @@ Thumbs.db
 
 # Hugo Module
 /_vendor/
+
+# WorkBuddy 本地数据
+/.workbuddy/
