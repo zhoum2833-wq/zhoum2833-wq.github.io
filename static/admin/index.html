@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>在线写作台 | Zhoum's Tech Notes</title>
+<script src="https://cdn.jsdelivr.net/npm/marked@12.0.2/marked.min.js"></script>
+<style>
+  :root {
+    --bg: #16181d; --panel: #1e2128; --panel2: #252932; --border: #343945;
+    --text: #e2e5ea; --dim: #9aa1ad; --accent: #4da3ff; --ok: #3fb96b; --warn: #e0a13c; --err: #e05c5c;
+  }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--bg); color:var(--text); font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft YaHei",sans-serif; }
+  a { color:var(--accent); text-decoration:none; }
+  a:hover { text-decoration:underline; }
+  header { padding:14px 24px; border-bottom:1px solid var(--border); display:flex; align-items:center; gap:14px; flex-wrap:wrap; }
+  header h1 { font-size:17px; margin:0; }
+  header .spacer { flex:1; }
+  .status-dot { width:9px; height:9px; border-radius:50%; background:var(--err); display:inline-block; margin-right:6px; }
+  .status-dot.on { background:var(--ok); }
+  main { padding:20px 24px; max-width:1400px; margin:0 auto; }
+  .card { background:var(--panel); border:1px solid var(--border); border-radius:10px; padding:18px; margin-bottom:16px; }
+  label { display:block; font-size:12px; color:var(--dim); margin:10px 0 4px; }
+  input[type=text], input[type=password], input[type=datetime-local], textarea, select {
+    width:100%; background:var(--panel2); color:var(--text); border:1px solid var(--border);
+    border-radius:6px; padding:8px 10px; font-size:14px; outline:none;
+  }
+  input:focus, textarea:focus { border-color:var(--accent); }
+  textarea.code { font-family:Consolas,"Courier New",monospace; font-size:13.5px; line-height:1.65; resize:vertical; }
+  button {
+    background:var(--accent); color:#fff; border:none; border-radius:6px; padding:9px 18px;
+    font-size:14px; cursor:pointer; margin-right:8px; margin-top:12px;
+  }
+  button:hover { filter:brightness(1.1); }
+  button.ghost { background:var(--panel2); color:var(--text); border:1px solid var(--border); }
+  button.danger { background:var(--err); }
+  button:disabled { opacity:.45; cursor:not-allowed; }
+  .row { display:flex; gap:14px; flex-wrap:wrap; }
+  .row > div { flex:1; min-width:180px; }
+  .grid2 { display:grid; grid-template-columns:1fr 1fr; gap:16px; align-items:start; }
+  @media (max-width: 980px) { .grid2 { grid-template-columns:1fr; } }
+  #preview { background:#fff; color:#222; border-radius:8px; padding:28px 32px; max-height:75vh; overflow:auto; font-size:15.5px; line-height:1.8; }
+  #preview h1,#preview h2,#preview h3 { border-bottom:1px solid #e5e5e5; padding-bottom:.25em; }
+  #preview pre { background:#21252b; color:#d8dee9; padding:14px; border-radius:8px; overflow:auto; font-size:13px; line-height:1.6; }
+  #preview code { font-family:Consolas,monospace; }
+  #preview p code, #preview li code { background:#eef1f4; padding:2px 5px; border-radius:4px; color:#c7254e; }
+  #preview img { max-width:100%; }
+  #preview blockquote { border-left:4px solid #ccc; margin:0; padding:2px 14px; color:#555; background:#f7f7f7; }
+  #preview table { border-collapse:collapse; } #preview th,#preview td { border:1px solid #ccc; padding:6px 12px; }
+  .postlist { list-style:none; margin:0; padding:0; }
+  .postlist li { padding:9px 12px; border-bottom:1px solid var(--border); cursor:pointer; display:flex; justify-content:space-between; gap:10px; align-items:center; }
+  .postlist li:hover { background:var(--panel2); }
+  .postlist .draft-tag { color:var(--warn); font-size:12px; border:1px solid var(--warn); border-radius:4px; padding:1px 6px; }
+  .msg { margin-top:12px; padding:10px 14px; border-radius:6px; font-size:13.5px; display:none; }
+  .msg.info { display:block; background:#223042; color:#9cc8ff; }
+  .msg.ok { display:block; background:#1d3527; color:#8ee2ae; }
+  .msg.err { display:block; background:#3a2326; color:#ffb0b0; }
+  .hint { font-size:12.5px; color:var(--dim); line-height:1.7; }
+  .checkbox { display:flex; align-items:center; gap:7px; margin-top:12px; font-size:14px; }
+  .checkbox input { width:auto; }
+  kbd { background:var(--panel2); border:1px solid var(--border); border-radius:4px; padding:1px 6px; font-size:12px; }
+  #deploybar { display:none; margin-top:12px; font-size:13.5px; }
+  .spin { display:inline-block; width:14px; height:14px; border:2px solid var(--border); border-top-color:var(--accent); border-radius:50%; animation:sp 1s linear infinite; vertical-align:-2px; margin-right:8px; }
+  @keyframes sp { to { transform:rotate(360deg); } }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>✍️ 在线写作台</h1>
+  <span id="authState"><span class="status-dot"></span>未连接</span>
+  <span class="spacer"></span>
+  <a href="/" target="_blank">打开博客首页 ↗</a>
+  <button class="ghost" id="btnLogout" onclick="logout()" style="display:none;margin-top:0">断开连接</button>
+</header>
+
+<main>
+  <!-- ============ 登录 ============ -->
+  <div id="screenLogin" class="card" style="max-width:640px">
+    <b>连接到 GitHub 仓库</b>
+    <p class="hint">输入 GitHub Token（PAT）后即可在线写文章并一键发布。Token 只保存在你自己的浏览器里，直接与 GitHub API 通信，不经过任何第三方。<br>
+    建议使用 <b>Fine-grained token</b>：仅授权本仓库（zhoum2833-wq/zhoum2833-wq.github.io）、权限只勾 <b>Contents: Read and write</b>，并设置较短的过期时间。</p>
+    <label>GitHub Token</label>
+    <input type="password" id="patInput" placeholder="github_pat_… 或 ghp_…" autocomplete="off">
+    <button onclick="login()">连接</button>
+    <div id="loginMsg" class="msg"></div>
+  </div>
+
+  <!-- ============ 主界面 ============ -->
+  <div id="screenMain" style="display:none">
+    <div class="card">
+      <b>📚 已发布文章</b> <span class="hint" id="postCount"></span>
+      <ul class="postlist" id="postList" style="margin-top:10px"></ul>
+      <button class="ghost" onclick="newPost()">＋ 写新文章</button>
+    </div>
+
+    <div class="card" id="editorCard" style="display:none">
+      <b id="editorTitle">新建文章</b>
+      <div class="row">
+        <div><label>标题</label><input type="text" id="fTitle" oninput="autoSlug()"></div>
+        <div style="max-width:260px"><label>文件名（不含 .md，即文章 URL）</label><input type="text" id="fSlug"></div>
+      </div>
+      <div class="row">
+        <div style="max-width:240px"><label>发布时间</label><input type="datetime-local" id="fDate"></div>
+        <div><label>标签（逗号分隔）</label><input type="text" id="fTags" placeholder="STM32, FOC, 笔记"></div>
+        <div><label>分类（逗号分隔）</label><input type="text" id="fCats" placeholder="嵌入式开发"></div>
+      </div>
+      <label>正文（Markdown，支持内联 HTML）</label>
+      <textarea id="fBody" class="code" rows="20" placeholder="在这里写正文…"></textarea>
+      <div class="checkbox"><input type="checkbox" id="fDraft"> <span>保存为草稿（draft: true，不会出现在网站上）</span></div>
+      <div class="checkbox"><input type="checkbox" id="fAutoOpen" checked> <span>部署完成后自动打开文章页面</span></div>
+      <div>
+        <button onclick="publish()">🚀 发布到网站</button>
+        <button class="ghost" onclick="renderPreview(true)">👁 本地预览排版</button>
+        <button class="ghost" onclick="newPost()">清空</button>
+        <button class="danger" id="btnDelete" onclick="delPost()" style="display:none">删除此文</button>
+      </div>
+      <div id="editorMsg" class="msg"></div>
+      <div id="deploybar">
+        <span class="spin"></span><span id="deployText">正在部署…</span>
+      </div>
+    </div>
+
+    <div class="card" id="previewCard" style="display:none">
+      <b>排版预览（近似 PaperMod 实际效果，最终以线上为准）</b>
+      <div id="preview" style="margin-top:12px"></div>
+    </div>
+  </div>
+</main>
+
+<script>
+"use strict";
+// ================= 配置 =================
+const OWNER = "zhoum2833-wq";
+const REPO  = "zhoum2833-wq.github.io";
+const BRANCH = "main";
+const DIR = "content/posts";
+const SITE = "https://zhoum2833-wq.github.io";
+const PAT_KEY = "gh_pat_" + REPO;
+
+let TOKEN = localStorage.getItem(PAT_KEY) || "";
+let currentSha = null;   // 编辑已有文件时记录 sha
+let currentName = null;
+let previewTimer = null;
+
+// ================= 工具 =================
+async function gh(path, opts = {}) {
+  const res = await fetch("https://api.github.com" + path, Object.assign({}, opts, {
+    headers: Object.assign({
+      "Authorization": "Bearer " + TOKEN,
+      "Accept": "application/vnd.github+json",
+      "Content-Type": "application/json"
+    }, opts.headers || {})
+  }));
+  if (!res.ok) {
+    let detail = "";
+    try { detail = (await res.json()).message || ""; } catch (e) {}
+    throw new Error("GitHub API " + res.status + " " + detail);
+  }
+  return res.json();
+}
+function b64encodeUtf8(str) {
+  const bytes = new TextEncoder().encode(str);
+  let bin = "";
+  const CH = 0x8000;
+  for (let i = 0; i < bytes.length; i += CH)
+    bin += String.fromCharCode.apply(null, bytes.subarray(i, i + CH));
+  return btoa(bin);
+}
+function b64decodeUtf8(b64) {
+  const bin = atob(b64.replace(/\n/g, ""));
+  const bytes = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+  return new TextDecoder().decode(bytes);
+}
+function esc(s) { return s.replace(/\\/g, "\\\\").replace(/"/g, '\\"'); }
+function yamlList(s) {
+  const arr = s.split(/[,，]/).map(x => x.trim()).filter(Boolean);
+  return arr.length ? arr.map(x => '"' + esc(x) + '"').join(", ") : "[]";
+}
+function msg(id, text, cls) {
+  const el = document.getElementById(id);
+  el.className = "msg " + cls; el.textContent = text;
+}
+function nowLocal() {
+  const d = new Date();
+  d.setMinutes(d.getMinutes() - d.getTimezoneOffset());
+  return d.toISOString().slice(0, 16);
+}
+function slugify(t) {
+  return t.trim().replace(/[\\/:*?"<>|#%&{}$!'@+`=]/g, "").replace(/\s+/g, "-").slice(0, 80);
+}
+
+// ================= 登录 =================
+async function login() {
+  const pat = document.getElementById("patInput").value.trim();
+  if (!pat) return msg("loginMsg", "请输入 Token", "err");
+  TOKEN = pat;
+  try {
+    const me = await gh("/user");
+    localStorage.setItem(PAT_KEY, pat);
+    msg("loginMsg", "已连接：" + me.login, "ok");
+    enterMain();
+  } catch (e) {
+    msg("loginMsg", "连接失败：" + e.message, "err");
+  }
+}
+function logout() {
+  localStorage.removeItem(PAT_KEY); TOKEN = "";
+  location.reload();
+}
+function enterMain() {
+  document.getElementById("screenLogin").style.display = "none";
+  document.getElementById("screenMain").style.display = "";
+  document.getElementById("btnLogout").style.display = "";
+  document.getElementById("authState").innerHTML = '<span class="status-dot on"></span>已连接 GitHub';
+  loadPosts();
+}
+
+// ================= 文章列表 =================
+async function loadPosts() {
+  const list = document.getElementById("postList");
+  list.innerHTML = '<li style="color:var(--dim)">加载中…</li>';
+  try {
+    const items = await gh("/repos/" + OWNER + "/" + REPO + "/contents/" + DIR + "?ref=" + BRANCH);
+    const mds = items.filter(x => x.name.endsWith(".md") && x.name !== "_index.md");
+    document.getElementById("postCount").textContent = "共 " + mds.length + " 篇";
+    list.innerHTML = "";
+    for (const it of mds) {
+      const li = document.createElement("li");
+      const left = document.createElement("span"); left.textContent = it.name;
+      const right = document.createElement("span"); right.className = "hint"; right.textContent = (it.size/1024).toFixed(1) + " KB";
+      li.appendChild(left); li.appendChild(right);
+      li.onclick = () => openPost(it.name);
+      list.appendChild(li);
+    }
+  } catch (e) {
+    list.innerHTML = "";
+    const li = document.createElement("li"); li.style.color = "var(--err)";
+    li.textContent = "加载失败：" + e.message; list.appendChild(li);
+  }
+}
+
+// ================= 编辑器 =================
+function newPost() {
+  currentSha = null; currentName = null;
+  document.getElementById("editorCard").style.display = "";
+  document.getElementById("editorTitle").textContent = "新建文章";
+  document.getElementById("btnDelete").style.display = "none";
+  document.getElementById("deploybar").style.display = "none";
+  msg("editorMsg", "", "info");
+  ["fTitle","fSlug","fTags","fCats","fBody"].forEach(id => document.getElementById(id).value = "");
+  document.getElementById("fDate").value = nowLocal();
+  document.getElementById("fDraft").checked = false;
+  document.getElementById("previewCard").style.display = "none";
+  document.getElementById("fTitle").focus();
+  window.scrollTo({ top: document.getElementById("editorCard").offsetTop - 70, behavior: "smooth" });
+}
+async function openPost(name) {
+  try {
+    const f = await gh("/repos/" + OWNER + "/" + REPO + "/contents/" + DIR + "/" + encodeURIComponent(name) + "?ref=" + BRANCH);
+    const raw = b64decodeUtf8(f.content);
+    const m = raw.match(/^---\r?\n([\s\S]*?)\r?\n---\r?\n?([\s\S]*)$/);
+    const fm = m ? m[1] : "", body = m ? m[2] : "";
+    const get = k => { const mm = fm.match(new RegExp("^" + k + ':[ \\t]*"?([^"\\n]*)"?', "m")); return mm ? mm[1].trim() : ""; };
+    currentSha = f.sha; currentName = name;
+    document.getElementById("editorCard").style.display = "";
+    document.getElementById("editorTitle").textContent = "编辑：" + name;
+    document.getElementById("btnDelete").style.display = "";
+    document.getElementById("deploybar").style.display = "none";
+    document.getElementById("fTitle").value = get("title");
+    document.getElementById("fSlug").value = name.replace(/\.md$/, "");
+    document.getElementById("fDate").value = get("date").slice(0, 16);
+    const tags = fm.match(/^tags:\s*\[(.*)\]/m), cats = fm.match(/^categories:\s*\[(.*)\]/m);
+    document.getElementById("fTags").value = tags ? tags[1].replace(/"/g, "").replace(/,\s*/g, ", ") : "";
+    document.getElementById("fCats").value = cats ? cats[1].replace(/"/g, "").replace(/,\s*/g, ", ") : "";
+    document.getElementById("fDraft").checked = /^\s*draft:\s*true/m.test(fm);
+    document.getElementById("fBody").value = body;
+    msg("editorMsg", "", "info");
+    renderPreview(true);
+    window.scrollTo({ top: document.getElementById("editorCard").offsetTop - 70, behavior: "smooth" });
+  } catch (e) { msg("editorMsg", "读取失败：" + e.message, "err"); }
+}
+function buildMarkdown() {
+  const title = document.getElementById("fTitle").value.trim();
+  const dt = document.getElementById("fDate").value || nowLocal();
+  const date = dt.length === 16 ? dt + ":00+08:00" : dt;
+  const draft = document.getElementById("fDraft").checked;
+  return "---\n"
+    + 'title: "' + esc(title) + '"\n'
+    + "date: " + date + "\n"
+    + "lastmod: " + date + "\n"
+    + 'author: "zhoum2833"\n'
+    + 'description: ""\n'
+    + "tags: [" + yamlList(document.getElementById("fTags").value) + "]\n"
+    + "categories: [" + yamlList(document.getElementById("fCats").value) + "]\n"
+    + "showToc: true\n"
+    + "TocOpen: true\n"
+    + "draft: " + draft + "\n"
+    + "---\n\n"
+    + document.getElementById("fBody").value;
+}
+function autoSlug() {
+  const s = document.getElementById("fSlug");
+  if (!s.dataset.touched) s.value = slugify(document.getElementById("fTitle").value);
+}
+document.addEventListener("DOMContentLoaded", () => {
+  document.getElementById("fSlug").addEventListener("input", e => e.target.dataset.touched = "1");
+  document.getElementById("fBody").addEventListener("input", () => {
+    clearTimeout(previewTimer);
+    previewTimer = setTimeout(() => renderPreview(false), 400);
+  });
+});
+
+// ================= 预览 =================
+function renderPreview(force) {
+  const card = document.getElementById("previewCard");
+  if (force || card.style.display === "") card.style.display = "";
+  const body = document.getElementById("fBody").value;
+  const title = document.getElementById("fTitle").value || "（无标题）";
+  const html = (typeof marked !== "undefined") ? marked.parse(body) : "<p style='color:#888'>预览组件（marked.js）加载失败，请检查网络。</p>";
+  document.getElementById("preview").innerHTML = "<h1>" + esc(title) + "</h1>" + html;
+  if (force) document.getElementById("previewCard").scrollIntoView({ behavior: "smooth" });
+}
+
+// ================= 发布 =================
+async function publish() {
+  const title = document.getElementById("fTitle").value.trim();
+  let slug = document.getElementById("fSlug").value.trim().replace(/\.md$/, "");
+  if (!title) return msg("editorMsg", "请填写标题", "err");
+  if (!slug) { slug = slugify(title); document.getElementById("fSlug").value = slug; }
+  const filename = slug + ".md";
+  const content = buildMarkdown();
+  const btn = document.querySelector("#editorCard button");
+  btn.disabled = true;
+  msg("editorMsg", "正在提交到 GitHub…", "info");
+  try {
+    const payload = {
+      message: "发布文章: " + title + (document.getElementById("fDraft").checked ? "（草稿）" : ""),
+      content: b64encodeUtf8(content),
+      branch: BRANCH
+    };
+    if (currentSha && currentName === filename) payload.sha = currentSha;
+    if (currentSha && currentName !== filename) {
+      // 改名发布：新路径直接创建，旧文件删除
+      payload.message += "（改名自 " + currentName + "）";
+      try {
+        await gh("/repos/" + OWNER + "/" + REPO + "/contents/" + DIR + "/" + encodeURIComponent(currentName), {
+          method: "DELETE",
+          body: JSON.stringify({ message: "重命名: " + currentName + " → " + filename, sha: currentSha, branch: BRANCH })
+        });
+      } catch (e) { msg("editorMsg", "删除旧文件失败：" + e.message, "err"); btn.disabled = false; return; }
+      currentSha = null; currentName = null;
+    }
+    const r = await gh("/repos/" + OWNER + "/" + REPO + "/contents/" + DIR + "/" + encodeURIComponent(filename), {
+      method: "PUT", body: JSON.stringify(payload)
+    });
+    const sha = r.commit.sha;
+    msg("editorMsg", "✅ 已提交（" + sha.slice(0, 7) + "），等待 GitHub Actions 构建部署…", "ok");
+    currentSha = r.content.sha; currentName = filename;
+    watchDeploy(sha, slug);
+  } catch (e) {
+    msg("editorMsg", "提交失败：" + e.message, "err");
+  } finally { btn.disabled = false; }
+  loadPosts();
+}
+async function watchDeploy(sha, slug) {
+  const bar = document.getElementById("deploybar");
+  const txt = document.getElementById("deployText");
+  bar.style.display = "";
+  txt.textContent = "正在构建部署…（通常约 40~90 秒）";
+  const url = SITE + "/posts/" + encodeURIComponent(slug) + "/";
+  for (let i = 0; i < 60; i++) {
+    await new Promise(r => setTimeout(r, 10000));
+    try {
+      const runs = await gh("/repos/" + OWNER + "/" + REPO + "/actions/runs?head_sha=" + sha + "&per_page=1");
+      const run = runs.workflow_runs && runs.workflow_runs[0];
+      if (run) {
+        if (run.status === "completed") {
+          if (run.conclusion === "success") {
+            bar.style.display = "none";
+            msg("editorMsg", "🎉 已上线！" + (document.getElementById("fDraft").checked ? "（草稿不显示，可去文章列表查看）" : url), "ok");
+            if (document.getElementById("fAutoOpen").checked && !document.getElementById("fDraft").checked)
+              window.open(url, "_blank");
+            loadPosts();
+          } else {
+            txt.innerHTML = '❌ 部署失败，<a target="_blank" href="https://github.com/' + OWNER + '/' + REPO + '/actions">查看日志</a>';
+          }
+          return;
+        }
+        txt.textContent = "构建中…（" + (run.status === "in_progress" ? "部署中" : "排队中") + "）";
+      }
+    } catch (e) { /* 轮询失败静默重试 */ }
+  }
+  txt.innerHTML = '等待超时，可手动刷新 <a target="_blank" href="' + url + '">' + url + "</a>";
+}
+
+// ================= 删除 =================
+async function delPost() {
+  if (!currentName) return;
+  if (!confirm("确定删除文章 " + currentName + " ？删除后会从网站下线（仍可通过 git 历史找回）。")) return;
+  try {
+    await gh("/repos/" + OWNER + "/" + REPO + "/contents/" + DIR + "/" + encodeURIComponent(currentName), {
+      method: "DELETE",
+      body: JSON.stringify({ message: "删除文章: " + currentName, sha: currentSha, branch: BRANCH })
+    });
+    msg("editorMsg", "已删除，部署完成后从网站下线。", "ok");
+    currentSha = null; currentName = null;
+    document.getElementById("editorCard").style.display = "none";
+    loadPosts();
+  } catch (e) { msg("editorMsg", "删除失败：" + e.message, "err"); }
+}
+
+// ================= 初始化 =================
+if (TOKEN) {
+  gh("/user").then(enterMain).catch(() => {
+    msg("loginMsg", "保存的 Token 已失效，请重新输入。", "err");
+    localStorage.removeItem(PAT_KEY); TOKEN = "";
+  });
+}
+</script>
+</body>
+</html>

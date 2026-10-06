@@ -79,10 +79,10 @@ summaryLength = 120
 #  url = "/categories/"
 #  weight = 3
 
-[[menu.main]]
-  name = "电赛入门"
-  url = "/training/"
-  weight = 3
+#[[menu.main]]
+#  name = "电赛入门"
+#  url = "/training/"
+#  weight = 3
 
 [[menu.main]]
   name = "搜索"
