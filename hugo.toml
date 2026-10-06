@@ -120,13 +120,10 @@ summaryLength = 120
   # --- 主页文章样式 ---
   # homeInfoParams 定义首页 Hero 区域
   [params.homeInfoParams]
-    title = "Hello, I'm zhoum2833 👋"
+    title = "这里是EE战士星见望"
     content = """
-    嵌入式软件工程师 | C/C++ · Python · Rust
-
-    这里记录编程、嵌入式开发、工具链、学习笔记。
-
-    思而不学则殆，学而不思则罔。
+    工程师 | C与Python 
+    简介无力，请看博客文章
     """
 
   # --- 个人头像 ---
