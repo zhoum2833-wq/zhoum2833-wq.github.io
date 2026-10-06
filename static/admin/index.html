@@ -106,20 +106,25 @@
       <button class="ghost" onclick="newPost()">＋ 写新文章</button>
     </div>
 
+    <div class="card">
+      <b>📄 独立页面</b> <span class="hint">（关于、搜索等；只改正文，页面专属配置原样保留）</span>
+      <ul class="postlist" id="pageList" style="margin-top:10px"></ul>
+    </div>
+
     <div class="card" id="editorCard" style="display:none">
       <b id="editorTitle">新建文章</b>
       <div class="row">
         <div><label>标题</label><input type="text" id="fTitle" oninput="autoSlug()"></div>
         <div style="max-width:260px"><label>文件名（不含 .md，即文章 URL）</label><input type="text" id="fSlug"></div>
       </div>
-      <div class="row">
+      <div class="row" id="rowTaxonomy">
         <div style="max-width:240px"><label>发布时间</label><input type="datetime-local" id="fDate"></div>
         <div><label>标签（逗号分隔）</label><input type="text" id="fTags" placeholder="STM32, FOC, 笔记"></div>
         <div><label>分类（逗号分隔）</label><input type="text" id="fCats" placeholder="嵌入式开发"></div>
       </div>
       <label>正文（Markdown，支持内联 HTML）</label>
       <textarea id="fBody" class="code" rows="20" placeholder="在这里写正文…"></textarea>
-      <div class="checkbox"><input type="checkbox" id="fDraft"> <span>保存为草稿（draft: true，不会出现在网站上）</span></div>
+      <div class="checkbox" id="rowDraft"><input type="checkbox" id="fDraft"> <span>保存为草稿（draft: true，不会出现在网站上）</span></div>
       <div class="checkbox"><input type="checkbox" id="fAutoOpen" checked> <span>部署完成后自动打开文章页面</span></div>
       <div>
         <button onclick="publish()">🚀 发布到网站</button>
@@ -147,12 +152,16 @@ const OWNER = "zhoum2833-wq";
 const REPO  = "zhoum2833-wq.github.io";
 const BRANCH = "main";
 const DIR = "content/posts";
+const PAGE_DIR = "content";
 const SITE = "https://zhoum2833-wq.github.io";
 const PAT_KEY = "gh_pat_" + REPO;
 
 let TOKEN = localStorage.getItem(PAT_KEY) || "";
 let currentSha = null;   // 编辑已有文件时记录 sha
 let currentName = null;
+let currentKind = "post"; // post | page
+let currentPath = null;   // 完整仓库路径（页面模式用）
+let currentRawFm = null;  // 页面模式：原始 front matter，保存时原样保留
 let previewTimer = null;
 
 // ================= 工具 =================
@@ -227,6 +236,7 @@ function enterMain() {
   document.getElementById("btnLogout").style.display = "";
   document.getElementById("authState").innerHTML = '<span class="status-dot on"></span>已连接 GitHub';
   loadPosts();
+  loadPages();
 }
 
 // ================= 文章列表 =================
@@ -253,32 +263,67 @@ async function loadPosts() {
   }
 }
 
+// ================= 独立页面列表 =================
+async function loadPages() {
+  const list = document.getElementById("pageList");
+  list.innerHTML = '<li style="color:var(--dim)">加载中…</li>';
+  try {
+    const items = await gh("/repos/" + OWNER + "/" + REPO + "/contents/" + PAGE_DIR + "?ref=" + BRANCH);
+    const mds = items.filter(x => x.type === "file" && x.name.endsWith(".md"));
+    list.innerHTML = "";
+    if (!mds.length) { list.innerHTML = '<li style="color:var(--dim)">没有独立页面</li>'; return; }
+    for (const it of mds) {
+      const li = document.createElement("li");
+      const left = document.createElement("span"); left.textContent = it.name.replace(/\.md$/, "") + "（/" + it.name.replace(/\.md$/, "").replace(/^_index$/, "") + "/）";
+      const right = document.createElement("span"); right.className = "hint"; right.textContent = (it.size/1024).toFixed(1) + " KB";
+      li.appendChild(left); li.appendChild(right);
+      li.onclick = () => openPage(it.name);
+      list.appendChild(li);
+    }
+  } catch (e) {
+    list.innerHTML = '<li style="color:var(--err)">加载失败：' + e.message + "</li>";
+  }
+}
+
 // ================= 编辑器 =================
+function toggleMode(kind) {
+  const isPage = kind === "page";
+  document.getElementById("rowTaxonomy").style.display = isPage ? "none" : "";
+  document.getElementById("rowDraft").style.display = isPage ? "none" : "";
+  document.getElementById("btnDelete").style.display = (isPage || !currentName) ? "none" : "";
+  const slug = document.getElementById("fSlug");
+  slug.disabled = isPage;
+  slug.parentElement.style.display = isPage ? "none" : "";
+}
 function newPost() {
-  currentSha = null; currentName = null;
+  currentSha = null; currentName = null; currentKind = "post"; currentPath = null; currentRawFm = null;
   document.getElementById("editorCard").style.display = "";
   document.getElementById("editorTitle").textContent = "新建文章";
-  document.getElementById("btnDelete").style.display = "none";
   document.getElementById("deploybar").style.display = "none";
   msg("editorMsg", "", "info");
   ["fTitle","fSlug","fTags","fCats","fBody"].forEach(id => document.getElementById(id).value = "");
   document.getElementById("fDate").value = nowLocal();
   document.getElementById("fDraft").checked = false;
   document.getElementById("previewCard").style.display = "none";
+  toggleMode("post");
   document.getElementById("fTitle").focus();
   window.scrollTo({ top: document.getElementById("editorCard").offsetTop - 70, behavior: "smooth" });
 }
-async function openPost(name) {
+function openPost(name) { return openFile(name, "post"); }
+function openPage(name) { return openFile(name, "page"); }
+async function openFile(name, kind) {
+  const dir = kind === "page" ? PAGE_DIR : DIR;
   try {
-    const f = await gh("/repos/" + OWNER + "/" + REPO + "/contents/" + DIR + "/" + encodeURIComponent(name) + "?ref=" + BRANCH);
+    const f = await gh("/repos/" + OWNER + "/" + REPO + "/contents/" + dir + "/" + encodeURIComponent(name) + "?ref=" + BRANCH);
     const raw = b64decodeUtf8(f.content);
     const m = raw.match(/^---\r?\n([\s\S]*?)\r?\n---\r?\n?([\s\S]*)$/);
     const fm = m ? m[1] : "", body = m ? m[2] : "";
     const get = k => { const mm = fm.match(new RegExp("^" + k + ':[ \\t]*"?([^"\\n]*)"?', "m")); return mm ? mm[1].trim() : ""; };
-    currentSha = f.sha; currentName = name;
+    currentSha = f.sha; currentName = name; currentKind = kind;
+    currentPath = dir + "/" + name;
+    currentRawFm = m ? fm : null;
     document.getElementById("editorCard").style.display = "";
-    document.getElementById("editorTitle").textContent = "编辑：" + name;
-    document.getElementById("btnDelete").style.display = "";
+    document.getElementById("editorTitle").textContent = (kind === "page" ? "编辑页面：" : "编辑：") + name;
     document.getElementById("deploybar").style.display = "none";
     document.getElementById("fTitle").value = get("title");
     document.getElementById("fSlug").value = name.replace(/\.md$/, "");
@@ -288,6 +333,7 @@ async function openPost(name) {
     document.getElementById("fCats").value = cats ? cats[1].replace(/"/g, "").replace(/,\s*/g, ", ") : "";
     document.getElementById("fDraft").checked = /^\s*draft:\s*true/m.test(fm);
     document.getElementById("fBody").value = body;
+    toggleMode(kind);
     msg("editorMsg", "", "info");
     renderPreview(true);
     window.scrollTo({ top: document.getElementById("editorCard").offsetTop - 70, behavior: "smooth" });
@@ -295,6 +341,14 @@ async function openPost(name) {
 }
 function buildMarkdown() {
   const title = document.getElementById("fTitle").value.trim();
+  const body = document.getElementById("fBody").value;
+  // 页面模式：保留原 front matter，仅更新 title（如改动），避免破坏 layout 等页面专属配置
+  if (currentKind === "page" && currentRawFm !== null) {
+    let fm = currentRawFm;
+    if (/^\s*title:.*$/m.test(fm)) fm = fm.replace(/^\s*title:.*$/m, 'title: "' + esc(title) + '"');
+    else fm = 'title: "' + esc(title) + '"\n' + fm;
+    return "---\n" + fm + "\n---\n\n" + body;
+  }
   const dt = document.getElementById("fDate").value || nowLocal();
   const date = dt.length === 16 ? dt + ":00+08:00" : dt;
   const draft = document.getElementById("fDraft").checked;
@@ -310,7 +364,7 @@ function buildMarkdown() {
     + "TocOpen: true\n"
     + "draft: " + draft + "\n"
     + "---\n\n"
-    + document.getElementById("fBody").value;
+    + body;
 }
 function autoSlug() {
   const s = document.getElementById("fSlug");
@@ -338,22 +392,24 @@ function renderPreview(force) {
 // ================= 发布 =================
 async function publish() {
   const title = document.getElementById("fTitle").value.trim();
+  const isPage = currentKind === "page";
   let slug = document.getElementById("fSlug").value.trim().replace(/\.md$/, "");
   if (!title) return msg("editorMsg", "请填写标题", "err");
-  if (!slug) { slug = slugify(title); document.getElementById("fSlug").value = slug; }
-  const filename = slug + ".md";
+  if (!slug && !isPage) { slug = slugify(title); document.getElementById("fSlug").value = slug; }
+  const filename = isPage ? currentName : slug + ".md";
+  const filePath = isPage ? currentPath : DIR + "/" + filename;
   const content = buildMarkdown();
   const btn = document.querySelector("#editorCard button");
   btn.disabled = true;
   msg("editorMsg", "正在提交到 GitHub…", "info");
   try {
     const payload = {
-      message: "发布文章: " + title + (document.getElementById("fDraft").checked ? "（草稿）" : ""),
+      message: (isPage ? "更新页面: " : "发布文章: ") + title + (!isPage && document.getElementById("fDraft").checked ? "（草稿）" : ""),
       content: b64encodeUtf8(content),
       branch: BRANCH
     };
-    if (currentSha && currentName === filename) payload.sha = currentSha;
-    if (currentSha && currentName !== filename) {
+    if (currentSha && (isPage || currentName === filename)) payload.sha = currentSha;
+    if (!isPage && currentSha && currentName !== filename) {
       // 改名发布：新路径直接创建，旧文件删除
       payload.message += "（改名自 " + currentName + "）";
       try {
@@ -364,24 +420,24 @@ async function publish() {
       } catch (e) { msg("editorMsg", "删除旧文件失败：" + e.message, "err"); btn.disabled = false; return; }
       currentSha = null; currentName = null;
     }
-    const r = await gh("/repos/" + OWNER + "/" + REPO + "/contents/" + DIR + "/" + encodeURIComponent(filename), {
+    const r = await gh("/repos/" + OWNER + "/" + REPO + "/contents/" + filePath, {
       method: "PUT", body: JSON.stringify(payload)
     });
     const sha = r.commit.sha;
     msg("editorMsg", "✅ 已提交（" + sha.slice(0, 7) + "），等待 GitHub Actions 构建部署…", "ok");
     currentSha = r.content.sha; currentName = filename;
-    watchDeploy(sha, slug);
+    watchDeploy(sha, isPage ? slug : slug, isPage);
   } catch (e) {
     msg("editorMsg", "提交失败：" + e.message, "err");
   } finally { btn.disabled = false; }
-  loadPosts();
+  isPage ? loadPages() : loadPosts();
 }
-async function watchDeploy(sha, slug) {
+async function watchDeploy(sha, slug, isPage) {
   const bar = document.getElementById("deploybar");
   const txt = document.getElementById("deployText");
   bar.style.display = "";
   txt.textContent = "正在构建部署…（通常约 40~90 秒）";
-  const url = SITE + "/posts/" + encodeURIComponent(slug) + "/";
+  const url = SITE + (isPage ? "/" : "/posts/") + encodeURIComponent(slug) + "/";
   for (let i = 0; i < 60; i++) {
     await new Promise(r => setTimeout(r, 10000));
     try {
