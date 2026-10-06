@@ -150,11 +150,7 @@ summaryLength = 120
   # --- 社交链接 (首页右侧) ---
   [[params.socialIcons]]
     name = "github"
-    url = "https://github.com/zhoum2833"
-
-  [[params.socialIcons]]
-    name = "rss"
-    url = "/index.xml"
+    url = "https://github.com/zhoum2833-wq"
 
   # --- 搜索 (PaperMod 内置 fuse.js 搜索) ---
   [params.fuseOpts]
