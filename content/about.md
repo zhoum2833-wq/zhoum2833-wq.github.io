@@ -7,17 +7,10 @@ TocOpen: false
 draft: false
 ---
 
+
 ## 我是谁
 
-嵌入式软件工程师，专注于 MCU 底层开发、实时操作系统和自动化工具链。
-
-日常工作涉及：
-
-- **MCU**: STM32 (F1/F4/H7), ESP32, nRF52
-- **RTOS**: FreeRTOS, Zephyr (入门)
-- **语言**: C (主力), C++, Python, Rust (学习)
-- **工具**: GCC, CMake, Git, OpenOCD, Logic Analyzer
-- **协议**: I2C, SPI, UART, CAN, BLE, Modbus
+一个菜鸟学生
 
 ## 关于本站
 
