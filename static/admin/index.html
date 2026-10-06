@@ -111,6 +111,19 @@
       <ul class="postlist" id="pageList" style="margin-top:10px"></ul>
     </div>
 
+    <div class="card" id="homeCard" style="display:none">
+      <b>🏠 首页信息</b> <span class="hint">（首页顶部的大标题和简介）</span>
+      <div style="margin-top:10px"><label>标题</label><input type="text" id="hTitle" placeholder="Hello, I'm zhoum2833 👋"></div>
+      <label>简介（每行一段，空行分隔段落）</label>
+      <textarea id="hContent" class="code" rows="7" placeholder="嵌入式软件工程师 | C/C++ · Python · Rust"></textarea>
+      <div>
+        <button onclick="saveHome()">🚀 保存并发布</button>
+        <button class="ghost" onclick="loadHome()">↻ 重新加载</button>
+      </div>
+      <div id="homeMsg" class="msg"></div>
+      <div id="homeDeploy" style="display:none"><span class="spin"></span><span id="homeDeployText">正在部署…</span></div>
+    </div>
+
     <div class="card" id="editorCard" style="display:none">
       <b id="editorTitle">新建文章</b>
       <div class="row">
@@ -241,6 +254,7 @@ function enterMain() {
   document.getElementById("authState").innerHTML = '<span class="status-dot on"></span>已连接 GitHub';
   loadPosts();
   loadPages();
+  loadHome();
 }
 
 // ================= 文章列表 =================
@@ -474,6 +488,112 @@ async function watchDeploy(sha, slug, isPage) {
     } catch (e) { /* 轮询失败静默重试 */ }
   }
   txt.innerHTML = '等待超时，可手动刷新 <a target="_blank" href="' + url + '">' + url + "</a>";
+}
+
+// ================= 首页信息（hugo.toml 的 homeInfoParams） =================
+const TOML_PATH = "hugo.toml";
+let homeSha = null;
+function tomlEscape(s) { return s.replace(/\\/g, "\\\\").replace(/"/g, '\\"'); }
+function tomlUnescape(s) { return s.replace(/\\(.)/g, "$1"); }
+async function loadHome() {
+  const card = document.getElementById("homeCard");
+  card.style.display = "";
+  try {
+    const f = await gh("/repos/" + OWNER + "/" + REPO + "/contents/" + TOML_PATH + "?ref=" + BRANCH);
+    homeSha = f.sha;
+    const raw = b64decodeUtf8(f.content);
+    const sec = extractHomeSection(raw);
+    if (!sec) { msg("homeMsg", "hugo.toml 中未找到 [params.homeInfoParams]，请手动编辑。", "err"); return; }
+    const title = (sec.match(/^[ \t]*title[ \t]*=[ \t]*"((?:[^"\\]|\\.)*)"/m) || [])[1] || "";
+    const cm = sec.match(/^[ \t]*content[ \t]*=[ \t]*"""[ \t]*\r?\n([\s\S]*?)\r?\n[ \t]*"""/m);
+    let content = cm ? cm[1] : "";
+    // 去掉 TOML 文件里的缩进（每行行首空白），还原成用户视角的文本，并还原转义
+    content = content.split(/\r?\n/).map(l => tomlUnescape(l.replace(/^[ \t]+/, ""))).join("\n");
+    document.getElementById("hTitle").value = tomlUnescape(title);
+    document.getElementById("hContent").value = content;
+    msg("homeMsg", "", "info");
+  } catch (e) { msg("homeMsg", "读取失败：" + e.message, "err"); }
+}
+function extractHomeSection(raw) {
+  const sm = raw.match(/^[ \t]*\[params\.homeInfoParams\][ \t]*$/m);
+  if (!sm) return null;
+  const start = sm.index;
+  const after = raw.slice(start + sm[0].length);
+  const nm = after.match(/\r?\n[ \t]*\[/); // 下一个 [区块] 为止
+  const end = nm ? start + sm[0].length + nm.index + 1 : raw.length;
+  return raw.slice(start, end);
+}
+function buildHomeToml(raw, title, content) {
+  const sec = extractHomeSection(raw);
+  if (!sec) throw new Error("hugo.toml 缺少 [params.homeInfoParams] 区块");
+  // 取原区块的键缩进（title 行行首空白），保持文件风格
+  const indM = sec.match(/\r?\n([ \t]*)title[ \t]*=/);
+  const ind = indM ? indM[1] : "    ";
+  const body = content.split(/\r?\n/).map(l => l.trim() ? ind + tomlEscape(l) : "").join("\n");
+  let newSec = sec;
+  if (/^[ \t]*title[ \t]*=/m.test(newSec))
+    newSec = newSec.replace(/^([ \t]*)title[ \t]*=.*$/m, "$1title = \"" + tomlEscape(title) + "\"");
+  else newSec = newSec.replace(/^([ \t]*\[params\.homeInfoParams\][ \t]*)$/m, "$1\n" + ind + "title = \"" + tomlEscape(title) + "\"");
+  const contentRe = /^([ \t]*)content[ \t]*=[ \t]*"""[^\n]*\r?\n[\s\S]*?\r?\n[ \t]*"""[^\n]*$/m;
+  const newContent = "$1content = \"\"\"\n" + body + "\n$1\"\"\"";
+  if (contentRe.test(newSec)) newSec = newSec.replace(contentRe, newContent);
+  else newSec = newSec.replace(/^([ \t]*title[ \t]*=.*$)/m, "$1\n" + ind + "content = \"\"\"\n" + body + "\n" + ind + "\"\"\"");
+  return raw.slice(0, raw.indexOf(sec)) + newSec + raw.slice(raw.indexOf(sec) + sec.length);
+}
+async function saveHome() {
+  const title = document.getElementById("hTitle").value.trim();
+  const content = document.getElementById("hContent").value.replace(/\s+$/, "");
+  if (!title) return msg("homeMsg", "标题不能为空", "err");
+  const btn = document.querySelector("#homeCard button");
+  btn.disabled = true;
+  msg("homeMsg", "正在提交到 GitHub…", "info");
+  try {
+    const f = await gh("/repos/" + OWNER + "/" + REPO + "/contents/" + TOML_PATH + "?ref=" + BRANCH);
+    const raw = b64decodeUtf8(f.content);
+    const out = buildHomeToml(raw, title, content);
+    // 安全校验：三引号数量必须成对，区块必须仍在
+    const q = s => (s.match(/"""/g) || []).length;
+    if (q(out) % 2 !== 0 || q(out) !== q(raw)) throw new Error("生成的 TOML 结构异常，已取消提交");
+    if (!/\[params\.homeInfoParams\]/.test(out)) throw new Error("生成的 TOML 丢失 homeInfoParams，已取消提交");
+    const r = await putFile(TOML_PATH, {
+      message: "更新首页信息",
+      content: b64encodeUtf8(out),
+      sha: f.sha,
+      branch: BRANCH
+    });
+    homeSha = r.content.sha;
+    msg("homeMsg", "✅ 已提交（" + r.commit.sha.slice(0, 7) + "），等待部署…", "ok");
+    watchHomeDeploy(r.commit.sha);
+  } catch (e) {
+    msg("homeMsg", "保存失败：" + e.message, "err");
+  } finally { btn.disabled = false; }
+}
+async function watchHomeDeploy(sha) {
+  const bar = document.getElementById("homeDeploy");
+  const txt = document.getElementById("homeDeployText");
+  bar.style.display = "";
+  txt.textContent = "正在构建部署…（通常约 40~90 秒）";
+  const url = SITE + "/";
+  for (let i = 0; i < 60; i++) {
+    await new Promise(r => setTimeout(r, 10000));
+    try {
+      const runs = await gh("/repos/" + OWNER + "/" + REPO + "/actions/runs?head_sha=" + sha + "&per_page=1");
+      const run = runs.workflow_runs && runs.workflow_runs[0];
+      if (run && run.status === "completed") {
+        bar.style.display = "none";
+        if (run.conclusion === "success") {
+          msg("homeMsg", "🎉 已上线，刷新首页即可看到（" + url + "）", "ok");
+          if (document.getElementById("fAutoOpen").checked) window.open(url, "_blank");
+        } else {
+          txt.innerHTML = '❌ 部署失败（配置可能有误），<a target="_blank" href="https://github.com/' + OWNER + '/' + REPO + '/actions">查看日志</a>。放心：失败时网站仍保持旧版本。';
+        }
+        return;
+      }
+      if (run) txt.textContent = "构建中…（" + (run.status === "in_progress" ? "部署中" : "排队中") + "）";
+    } catch (e) { /* 轮询失败静默重试 */ }
+  }
+  bar.style.display = "none";
+  msg("homeMsg", "等待超时，可手动刷新首页确认。", "err");
 }
 
 // ================= 删除 =================
