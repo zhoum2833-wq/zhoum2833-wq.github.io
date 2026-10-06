@@ -5,7 +5,17 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
 <title>在线写作台 | Zhoum's Tech Notes</title>
-<script src="https://cdn.jsdelivr.net/npm/marked@12.0.2/marked.min.js"></script>
+<script src="/admin/vendor/marked.min.js"></script>
+<script>
+  // 本地文件不可用时回退 CDN（保证预览功能始终可用）
+  window.addEventListener("DOMContentLoaded", function () {
+    if (typeof marked === "undefined") {
+      var s = document.createElement("script");
+      s.src = "https://cdn.jsdelivr.net/npm/marked@12.0.2/marked.min.js";
+      document.head.appendChild(s);
+    }
+  });
+</script>
 <style>
   :root {
     --bg: #16181d; --panel: #1e2128; --panel2: #252932; --border: #343945;
