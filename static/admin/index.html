@@ -394,6 +394,17 @@ function renderPreview(force) {
 }
 
 // ================= 发布 =================
+// 提交文件；遇 409（线上文件已被更新，本地持有的 sha 过期）自动取最新 sha 重试一次
+async function putFile(filePath, payload) {
+  try {
+    return await gh("/repos/" + OWNER + "/" + REPO + "/contents/" + filePath, { method: "PUT", body: JSON.stringify(payload) });
+  } catch (e) {
+    if (!/409/.test(String(e))) throw e;
+    const f = await gh("/repos/" + OWNER + "/" + REPO + "/contents/" + filePath + "?ref=" + BRANCH);
+    payload.sha = f.sha;
+    return await gh("/repos/" + OWNER + "/" + REPO + "/contents/" + filePath, { method: "PUT", body: JSON.stringify(payload) });
+  }
+}
 async function publish() {
   const title = document.getElementById("fTitle").value.trim();
   const isPage = currentKind === "page";
@@ -424,9 +435,7 @@ async function publish() {
       } catch (e) { msg("editorMsg", "删除旧文件失败：" + e.message, "err"); btn.disabled = false; return; }
       currentSha = null; currentName = null;
     }
-    const r = await gh("/repos/" + OWNER + "/" + REPO + "/contents/" + filePath, {
-      method: "PUT", body: JSON.stringify(payload)
-    });
+    const r = await putFile(filePath, payload);
     const sha = r.commit.sha;
     msg("editorMsg", "✅ 已提交（" + sha.slice(0, 7) + "），等待 GitHub Actions 构建部署…", "ok");
     currentSha = r.content.sha; currentName = filename;
